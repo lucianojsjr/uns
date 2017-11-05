@@ -16,4 +16,3 @@ function config($stateProvider, $urlRouterProvider) {
 
 	$urlRouterProvider.otherwise('/map');
 };
-

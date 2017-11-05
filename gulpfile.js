@@ -17,7 +17,7 @@ libJS.push('node_modules/bootstrap/dist/js/bootstrap.min.js');
 appCSS.push('node_modules/bootstrap/dist/css/bootstrap.min.css');
 
 appJS.push('assets/js/app.js');
-appJS.push('assets/js/directivies/*.js');
+appJS.push('assets/js/directives/*.js');
 appJS.push('assets/js/services/*.js');
 appJS.push('assets/js/controllers/*.js');
 
