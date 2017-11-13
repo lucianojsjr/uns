@@ -2,9 +2,9 @@ angular
     .module('uns')
     .controller('MapController', MapController);
 
-MapController.$inject = ['$scope'];
+MapController.$inject = ['$scope', 'Utils'];
 
-function MapController($scope) {
+function MapController($scope, Utils) {
     const mapElement = document.getElementById('map');
 
     $scope.map;
