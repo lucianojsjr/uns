@@ -1,0 +1,25 @@
+{
+  "name": "uns",
+  "version": "1.0.0",
+  "description": "Universal Network Sketcher",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lucianojsjr/uns.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lucianojsjr/uns/issues"
+  },
+  "homepage": "https://github.com/lucianojsjr/uns#readme",
+  "dependencies": {
+    "angular": "^1.6.6",
+    "bootstrap": "^4.0.0-beta.2",
+    "jquery": "^3.2.1",
+    "popper.js": "^1.12.7"
+  }
+}
