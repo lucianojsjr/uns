@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/lucianojsjr/uns#readme",
   "dependencies": {
+    "@uirouter/angularjs": "^1.0.10",
     "angular": "^1.6.6",
     "bootstrap": "^4.0.0-beta.2",
     "jquery": "^3.2.1",

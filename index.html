@@ -7,13 +7,25 @@
     <!-- CSS Dependencies -->
     <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
+<body ng-app="uns">
     <h1>UNS</h1>
+    <div ui-view=""></div>
 
-    <!-- JS Dependencies -->
+    <!-- Angular -->
     <script src="node_modules/angular/angular.min.js"></script>
+    <script src="node_modules/@uirouter/angularjs/release/angular-ui-router.min.js"></script>
+    <script src="./assets/app.js"></script>
+
+    <!-- Bootstrap -->
     <script src="node_modules/jquery/dist/jquery.slim.min.js"></script>
     <script src="node_modules/popper.js/dist/popper.min.js"></script>
     <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <!-- Map -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDknfIyIe2z1fnRTkaJmCF6Jw3Np536mRs"></script>
+
+    <!-- Controllers -->
+    <script src="./assets/js/controllers/map.js"></script>
+
 </body>
 </html>
