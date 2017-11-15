@@ -1,1 +1,13 @@
-<div id="map" style="width: 100%; height: 400px"></div>
+<div class="row">
+    <div class="col-lg-12 mb-4 pl-4">
+        <input type="file" on-read-file="loadContent($content)"/>
+
+        <div class="btn-group btn-group-sm pull-right" role="group">
+            <button type="button" class="btn btn-primary" ng-click="changeMapType('roadmap')">Mapa</button>
+            <button type="button" class="btn btn-info" ng-click="changeMapType('satellite')">Satélite</button>
+        </div>
+    </div>
+    <div class="col-lg-12">
+       <div id="map" style="width: 100%; height: 400px"></div>
+    </div>
+</div>
