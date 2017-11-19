@@ -26,10 +26,23 @@ function MapController($scope, Utils) {
             zoom: 6,
             disableDefaultUI: true
         });
+
+        addNodeEvent();
     }
 
     function changeMapType(type) {
         $scope.map.setMapTypeId(type);
+    }
+
+    function addNodeEvent() {
+        $scope.map.addListener('click', (evt) => {
+            let marker = new google.maps.Marker({
+                position: evt.latLng,
+                icon: markerIcon,
+                draggable: true,
+                map: $scope.map
+            });
+        });
     }
 
     function loadContent(content) {
