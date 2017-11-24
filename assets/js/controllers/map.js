@@ -5,7 +5,7 @@ angular
 MapController.$inject = ['$scope', 'Utils'];
 
 function MapController($scope, Utils) {
-	const mapElement = document.getElementById('map');
+	const mapElement = document.getElementById('map.js');
 	const markerIcon = {
 		path: google.maps.SymbolPath.CIRCLE,
 		scale: 4,

@@ -19,6 +19,9 @@ function MapDirective() {
 				fillOpacity: 1,
 			};
 
+			let markers = [];
+			let edges = [];
+
 			//TODO: LIMPAR O MAP PARA RENDERIZAR AO RENDERIZAR NOVA REDE
 			//TODO: CRIAR ABAS MAPA|SATELITE|SOURCE
 			//TODO: ADICIONAR NOVO NÒ
@@ -38,6 +41,21 @@ function MapDirective() {
 				addNodeListener();
 			};
 
+			setMapOnAll = (map) => {
+				markers.forEach((marker) => {
+					marker.setMap(map);
+				});
+
+				edges.forEach((edge) => {
+					edge.setMap(map);
+				});
+			};
+
+			clearMap = () => {
+				setMapOnAll(null);
+				markers = [];
+			};
+
 			addNodeListener = () => {
 				map.addListener('click', (evt) => {
 					if (!$scope.options.node) {
@@ -50,11 +68,13 @@ function MapDirective() {
 						draggable: true,
 						map: map
 					});
+
+					markers.push(marker);
 				});
 			};
 
 			renderNetwork = () => {
-				console.log($scope.currentNetwork);
+				clearMap();
 
 				renderNodes();
 				renderEdges();
@@ -79,6 +99,7 @@ function MapDirective() {
 						map: map
 					});
 
+					markers.push(marker);
 					bindDrag(marker, index);
 				});
 			};
@@ -104,6 +125,8 @@ function MapDirective() {
 						map: map
 					});
 
+					edges.push(edge);
+					
 					source.edges_source.push(edge);
 					target.edges_target.push(edge);
 				});
