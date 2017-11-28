@@ -1,0 +1,32 @@
+a,
+a:hover,
+a:visited {
+    color: #000;
+}
+
+.bg-blue {
+    background-color: #354AD2 !important;
+}
+
+.version {
+    color: white !important;
+    font-size: 14px;
+}
+
+.menu,
+.action-bar {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.action-bar{
+    width: 90% !important;
+}
+
+.menu-control {
+    width: 10px;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+    background-color: #354AD2;
+}
