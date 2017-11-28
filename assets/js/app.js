@@ -4,15 +4,15 @@ config.$inject = ['$stateProvider', '$urlRouterProvider'];
 unsModule.config(config);
 
 function config($stateProvider, $urlRouterProvider) {
-	$stateProvider.state('map', {
-		url: '/map',
+	$stateProvider.state('home', {
+		url: '/home',
 		views: {
 			'': {
-				templateUrl: './views/map.html',
-				controller: 'MapController'
+				templateUrl: './views/home.html',
+				controller: 'HomeController'
 			}
 		}
 	});
 
-	$urlRouterProvider.otherwise('/map');
+	$urlRouterProvider.otherwise('/home');
 };
