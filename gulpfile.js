@@ -6,13 +6,12 @@ let libJS = [];
 let appJS = [];
 let appCSS = [];
 
-libJS.push('node_modules/angular/angular.min.js');
-libJS.push('node_modules/@uirouter/angularjs/release/angular-ui-router.min.js');
-libJS.push('node_modules/jquery/dist/jquery.slim.min.js');
-libJS.push('node_modules/bootstrap/dist/js/bootstrap.min.js');
+libJS.push('assets/libs/angular/angular.min.js');
+libJS.push('assets/libs/angular-ui-router/release/angular-ui-router.min.js');
+libJS.push('assets/libs/jquery/dist/jquery.min.js');
+libJS.push('assets/libs/materialize/dist/js/materialize.min.js');
 
-appCSS.push('node_modules/bootstrap/dist/css/bootstrap.min.css');
-appCSS.push('assets/css/theme.css');
+appCSS.push('assets/libs/materialize/dist/css/materialize.min.css');
 
 appJS.push('assets/js/app.js');
 appJS.push('assets/js/directives/*.js');
