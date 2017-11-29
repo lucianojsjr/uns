@@ -4,14 +4,11 @@ const watch = require('gulp-watch');
 
 let libJS = [];
 let appJS = [];
-let appCSS = [];
 
 libJS.push('assets/libs/angular/angular.min.js');
 libJS.push('assets/libs/angular-ui-router/release/angular-ui-router.min.js');
 libJS.push('assets/libs/jquery/dist/jquery.min.js');
 libJS.push('assets/libs/materialize/dist/js/materialize.min.js');
-
-appCSS.push('assets/libs/materialize/dist/css/materialize.min.css');
 
 appJS.push('assets/js/app.js');
 appJS.push('assets/js/directives/*.js');
@@ -35,11 +32,6 @@ gulp.task('apps', function () {
 		.pipe(gulp.dest('./dist/'));
 });
 
-gulp.task('css', function () {
-	return gulp.src(appCSS)
-		.pipe(concat('app.css'))
-		.pipe(gulp.dest('./dist/'));
-});
 
-gulp.task('default', ['libs', 'apps', 'css', 'watch']);
-gulp.task('build', ['libs', 'apps', 'css']);
+gulp.task('default', ['libs', 'apps', 'watch']);
+gulp.task('build', ['libs', 'apps']);

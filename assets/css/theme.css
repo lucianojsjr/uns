@@ -1,11 +1,35 @@
-a,
-a:hover,
-a:visited {
-    color: #000;
+/* ========================
+            CUSTOM
+   ======================== */
+
+header, main, footer {
+    padding-left: 300px;
 }
 
-.bg-blue {
-    background-color: #354AD2 !important;
+@media only screen and (max-width: 992px) {
+    header, main, footer {
+        padding-left: 0;
+    }
+}
+
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+i.icon-white {
+    color: white;
+}
+
+.page-title,
+.page-title:hover {
+    font-size: 16px;
+    color: white !important;
 }
 
 .version {
@@ -13,20 +37,17 @@ a:visited {
     font-size: 14px;
 }
 
-.menu,
-.action-bar {
-    padding-top: 10px;
-    padding-bottom: 10px;
+.menu {
+    margin-left: 10px;
 }
 
-.action-bar{
-    width: 90% !important;
+.menu ul > li {
+    display: inline;
+    margin-right: 15px;
 }
 
-.menu-control {
-    width: 10px;
-}
-
-.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-    background-color: #354AD2;
+.menu ul > li .separator {
+    border-right: 2px solid #717171;
+    padding-top: 20px;
+    margin: 0 15px;
 }
