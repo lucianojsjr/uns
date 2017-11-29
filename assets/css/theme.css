@@ -26,6 +26,10 @@ i.icon-white {
     color: white;
 }
 
+i.icon-gray {
+    color: #717171;
+}
+
 .page-title,
 .page-title:hover {
     font-size: 16px;
@@ -47,7 +51,54 @@ i.icon-white {
 }
 
 .menu ul > li .separator {
-    border-right: 2px solid #717171;
+    border-right: 1px solid #717171;
     padding-top: 20px;
     margin: 0 15px;
+}
+
+.btn-upload {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+
+.btn-upload + label {
+    cursor: pointer;
+}
+
+.file-title {
+    margin: 10px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.collection-item {
+    cursor: pointer;
+}
+
+.collection-item:hover {
+    background-color: #EBEBEB;
+}
+
+.collection-item p {
+    white-space: nowrap;
+    margin-top: 0;
+    margin-bottom: 0;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.empty-files {
+    text-align: center;
+    background-color: #283593;
+    color: white;
+    margin-left: 10px;
+    margin-right: 10px;
+    padding: 12px 0;
 }

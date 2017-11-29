@@ -10,11 +10,12 @@ function readFile($parse) {
 		scope: {
 			onReadFile: "&"
 		},
-		link: function (scope, element, attrs) {
-			element.on('change', function (e) {
-				var reader = new FileReader();
-				reader.onload = function (e) {
-					scope.$apply(function () {
+		link: (scope, element, attrs) => {
+			element.on('change', (e) => {
+				let reader = new FileReader();
+
+				reader.onload = (e) => {
+					scope.$apply(() => {
 						scope.onReadFile({$content: e.target.result});
 					});
 				};
@@ -22,4 +23,4 @@ function readFile($parse) {
 			});
 		}
 	};
-};
+}

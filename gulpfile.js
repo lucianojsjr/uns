@@ -17,7 +17,6 @@ appJS.push('assets/js/controllers/*.js');
 
 gulp.task('watch', function () {
 	gulp.watch(appJS, ['apps']);
-	gulp.watch(appCSS, ['css']);
 });
 
 gulp.task('libs', function () {
@@ -31,7 +30,6 @@ gulp.task('apps', function () {
 		.pipe(concat('app.js'))
 		.pipe(gulp.dest('./dist/'));
 });
-
 
 gulp.task('default', ['libs', 'apps', 'watch']);
 gulp.task('build', ['libs', 'apps']);
