@@ -5,6 +5,20 @@ angular
 HomeController.$inject = ['$scope'];
 
 function HomeController($scope) {
+	const mapElement = document.getElementById('map');
+	const map = new google.maps.Map(mapElement, {
+		center: {
+			lat: -8.05428,
+			lng: -34.8813
+		},
+		zoom: 6,
+		disableDefaultUI: true
+	});
+
+	$('.button-collapse').sideNav({
+		closeOnClick: true
+	});
+
 	$scope.showMenu = true;
 	$scope.properties = {
 		"Número de nós": 1,
