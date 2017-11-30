@@ -17,7 +17,12 @@ function HomeController($scope, Utils) {
 
 	$scope.map;
 	$scope.files = [];
-	$scope.currentFile;
+	$scope.openedFiles = [];
+	$scope.options = {
+		node: false,
+		edge: false,
+		running: false
+	};
 
 	init = () => {
 		$scope.map = new google.maps.Map(mapElement, {
@@ -32,6 +37,21 @@ function HomeController($scope, Utils) {
 		$('.button-collapse').sideNav({
 			closeOnClick: true
 		});
+	};
+
+	openFile = (index) => {
+		if (isOpened(index)) {
+			return;
+		}
+
+		$scope.openedFiles.push({
+			name: $scope.files[index].name,
+			file_index: index
+		});
+	};
+
+	closeFile = (index) => {
+		$scope.openedFiles.splice(index, 1);
 	};
 
 	loadFile = (content) => {
@@ -145,6 +165,16 @@ function HomeController($scope, Utils) {
 		});
 	};
 
+	isOpened = (index) => {
+		return $scope.openedFiles.find((file) => {
+			return file.file_index === index;
+		});
+	};
+
+	turnFeature = (feature) => {
+		$scope.options[feature] = !$scope.options[feature];
+	};
+
 	$scope.showMenu = true;
 	$scope.properties = {
 		"Número de nós": 1,
@@ -169,6 +199,9 @@ function HomeController($scope, Utils) {
 	};
 
 	init();
+	$scope.openFile = openFile;
+	$scope.closeFile = closeFile;
 	$scope.loadFile = loadFile;
+	$scope.turnFeature = turnFeature;
 	$scope.renderNetwork = renderNetwork;
 }
