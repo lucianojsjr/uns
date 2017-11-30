@@ -30,6 +30,11 @@ i.icon-gray {
     color: #717171;
 }
 
+i.active,
+i.active:before {
+    color: #00695c;
+}
+
 .page-title,
 .page-title:hover {
     font-size: 16px;
@@ -101,4 +106,15 @@ i.icon-gray {
     margin-left: 10px;
     margin-right: 10px;
     padding: 12px 0;
+}
+
+.map-view .chip {
+    background-color: #283593;
+    color: white;
+    margin-top: 10px;
+}
+
+.map {
+    position: absolute;
+    z-index: -1;
 }
