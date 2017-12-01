@@ -244,7 +244,11 @@ function HomeController($scope, Utils) {
 		fillOpacity: 1,
 	};
 
+	//TODO: RENDERIZAR A REDE ATUAL
+	//TODO: CRIAR VARIAVEL PARA REDE ATUAL
+
 	$scope.map;
+	$scope.currentIndex;
 	$scope.files = [];
 	$scope.openedFiles = [];
 	$scope.options = {
@@ -268,6 +272,7 @@ function HomeController($scope, Utils) {
 		});
 	};
 
+	//TODO: ATUALIZAR A REDE ATUAL
 	openFile = (index) => {
 		if (isOpened(index)) {
 			return;
@@ -277,10 +282,21 @@ function HomeController($scope, Utils) {
 			name: $scope.files[index].name,
 			file_index: index
 		});
+
+		$scope.currentIndex = $scope.openedFiles.length - 1;
+
+		$('.button-collapse').sideNav('hide');
 	};
 
+	//TODO: ATUALIZAR INDEX AO REMOVER ARQUIVO
+	//TODO: ATUALIZAR A REDE ATUAL
 	closeFile = (index) => {
 		$scope.openedFiles.splice(index, 1);
+	};
+
+	//TODO: ATUALIZAR A REDE ATUAL
+	selectFile = (index) => {
+		$scope.currentIndex = index;
 	};
 
 	loadFile = (content) => {
@@ -430,6 +446,7 @@ function HomeController($scope, Utils) {
 	init();
 	$scope.openFile = openFile;
 	$scope.closeFile = closeFile;
+	$scope.selectFile = selectFile;
 	$scope.loadFile = loadFile;
 	$scope.turnFeature = turnFeature;
 	$scope.renderNetwork = renderNetwork;

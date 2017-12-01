@@ -109,12 +109,15 @@ i.active:before {
 }
 
 .map-view .chip {
-    background-color: #283593;
-    color: white;
-    margin-top: 10px;
+    cursor: pointer;
+    background-color: white;
+    border: 1px solid #EBEBEB;
+    color: black;
+    margin: 5px 5px;
 }
 
-.map {
-    position: absolute;
-    z-index: -1;
+.chip.active {
+    background-color: #283593;
+    color: white;
+    border: none;
 }

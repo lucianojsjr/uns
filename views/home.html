@@ -30,7 +30,8 @@
             <ul>
                 <li><a href=""><i class="icon-new-file small"></i></a></li>
                 <li>
-                    <input type="file" name="file" id="file" class="btn-upload" accept=".gml" on-read-file="loadFile($content)"/>
+                    <input type="file" name="file" id="file" class="btn-upload" accept=".gml"
+                           on-read-file="loadFile($content)"/>
                     <label for="file">
                         <i class="icon-upload small"></i>
                     </label>
@@ -39,21 +40,25 @@
                 <li><a href=""><i class="icon-export small"></i></a></li>
                 <li><a href=""><i class="icon-printer small"></i></a></li>
                 <li><a href="" class="separator"></a></li>
-                <li><a href=""><i class="icon-server small" ng-class="{'active' : options.node}" ng-click="turnFeature('node')"></i></a></li>
-                <li><a href=""><i class="icon-edge small" ng-class="{'active' : options.edge}" ng-click="turnFeature('edge')"></i></a></li>
-                <li><a href=""><i class="icon-run small" ng-class="{'active' : options.running}" ng-click="turnFeature('running')"></i></a></li>
+                <li><a href=""><i class="icon-server small" ng-class="{'active' : options.node}"
+                                  ng-click="turnFeature('node')"></i></a></li>
+                <li><a href=""><i class="icon-edge small" ng-class="{'active' : options.edge}"
+                                  ng-click="turnFeature('edge')"></i></a></li>
+                <li><a href=""><i class="icon-run small" ng-class="{'active' : options.running}"
+                                  ng-click="turnFeature('running')"></i></a></li>
                 <li><a href=""><i class="icon-settings small"></i></a></li>
                 <li><a href="" class="separator"></a></li>
             </ul>
         </div>
     </div>
-    <div class="row">
+    <div class="row" style="position: relative">
         <div class="col s12 map-view">
-            <div class="chip" ng-repeat="openedFile in openedFiles">
+            <div class="chip" ng-class="{'active': $index === currentIndex }" ng-repeat="openedFile in openedFiles"
+                 ng-click="selectFile($index)">
                 {{ openedFile.name }}
                 <i class="close material-icons" ng-click="closeFile($index)">close</i>
             </div>
         </div>
-        <div class="map" id="map" style="width: 100%; height: 500px"></div>
+        <div id="map" style="width: 100%; height: 500px"></div>
     </div>
 </main>
