@@ -77,11 +77,8 @@ function Utils() {
 
 		let nodes = graph.nodes || [];
 		let edges = graph.edges || [];
-		let indent1 = (typeof options.indent === 'string' ? options.indent : '  ');
-		let indent2 = indent1 + indent1;
-		let getGraphAttributes = options.graphAttributes || null;
-		let getNodeAttributes = options.nodeAttributes || null;
-		let getEdgeAttributes = options.edgeAttributes || null;
+		let indent1 = (typeof options.indent === 'string' ? options.indent : '    ');
+		let indent2 = '        ';
 		let lines = ['graph ['];
 
 		addAttribute = (key, value, indent) => {
@@ -106,8 +103,8 @@ function Utils() {
 			}
 		});
 
-		if (getGraphAttributes) {
-			forIn(getGraphAttributes(graph), (key, value) => {
+		if (options) {
+			forIn(options, (key, value) => {
 				addAttribute(key, value, indent1);
 			});
 		}
@@ -118,13 +115,6 @@ function Utils() {
 
 			addAttribute('id', node.id, indent2);
 			addAttribute('label', node.label, indent2);
-
-			if (getNodeAttributes) {
-				forIn(getNodeAttributes(node) || {}, (key, value) => {
-
-					addAttribute(key, value, indent2);
-				});
-			}
 
 			lines.push(indent1 + ']');
 		});
@@ -137,18 +127,28 @@ function Utils() {
 			addAttribute('target', edge.target, indent2);
 			addAttribute('label', edge.label, indent2);
 
-			if (getEdgeAttributes) {
-				forIn(getEdgeAttributes(edge) || {}, (key, value) => {
-					addAttribute(key, value, indent2);
-				});
-			}
-
 			lines.push(indent1 + ']');
 		});
 
 		lines.push(']');
 
 		return lines.join('\n');
+	};
+
+	getGML = (network) => {
+		let graph = {};
+		let options = {};
+
+		Object.keys(network).forEach(function (key) {
+			if (key === 'nodes' || key === 'edges') {
+				graph[key] = network[key];
+				return;
+			}
+
+			options[key] = network[key];
+		});
+
+		return stringify(graph, options);
 	};
 
 	isObject = (value) => {
@@ -186,6 +186,7 @@ function Utils() {
 	return {
 		parse: parse,
 		stringify: stringify,
+		getGML: getGML,
 		getDefaultNode: getDefaultNode
 	};
 };

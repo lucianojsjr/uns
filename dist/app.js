@@ -21,11 +21,13 @@ angular
 	.module('uns')
 	.directive('map', MapDirective);
 
-function MapDirective() {
+MapDirective.$inject = ['Utils'];
+
+function MapDirective(Utils) {
 	return {
 		restrict: 'EA',
 		scope: true,
-		template: '<div id="map" style="width: 100%; height: 500px"></div>',
+		templateUrl: 'views/map.html',
 		controller: ($scope) => {
 			$scope = $scope.$parent;
 
@@ -38,13 +40,18 @@ function MapDirective() {
 				fillOpacity: 1,
 			};
 
+			let map;
 			let markers = [];
 			let edges = [];
 
-			//TODO: CRIAR ABAS MAPA|SATELITE|SOURCE
+			$scope.view = 'roadmap';
+			$scope.gml;
+
 			//TODO: ADICIONAR NOVO NÒ
 			//TODO: ADICIONAR LINK ENTRE ELES
 			//TODO: CRIAR VALORES DEFAULT PARA LINK E NÓS
+			//TODO: ATUALIZAR ARQUIVO
+			//TODO: CRIAR NOVO ARQUIVO
 
 			initMap = () => {
 				map = new google.maps.Map(mapElement, {
@@ -53,6 +60,7 @@ function MapDirective() {
 						lng: -34.8813
 					},
 					zoom: 6,
+					mapTypeId: $scope.view,
 					disableDefaultUI: true
 				});
 
@@ -72,6 +80,17 @@ function MapDirective() {
 			clearMap = () => {
 				setMapOnAll(null);
 				markers = [];
+			};
+
+			changeView = (view) => {
+				$scope.view = view;
+
+				if (view === 'source') {
+					$scope.gml = $scope.currentNetwork ? Utils.getGML($scope.currentNetwork.network) : '';
+					return;
+				}
+
+				map.setMapTypeId(view);
 			};
 
 			addNodeListener = () => {
@@ -198,6 +217,7 @@ function MapDirective() {
 			});
 
 			initMap();
+			$scope.changeView = changeView;
 		}
 	}
 }
@@ -307,11 +327,8 @@ function Utils() {
 
 		let nodes = graph.nodes || [];
 		let edges = graph.edges || [];
-		let indent1 = (typeof options.indent === 'string' ? options.indent : '  ');
-		let indent2 = indent1 + indent1;
-		let getGraphAttributes = options.graphAttributes || null;
-		let getNodeAttributes = options.nodeAttributes || null;
-		let getEdgeAttributes = options.edgeAttributes || null;
+		let indent1 = (typeof options.indent === 'string' ? options.indent : '    ');
+		let indent2 = '        ';
 		let lines = ['graph ['];
 
 		addAttribute = (key, value, indent) => {
@@ -336,8 +353,8 @@ function Utils() {
 			}
 		});
 
-		if (getGraphAttributes) {
-			forIn(getGraphAttributes(graph), (key, value) => {
+		if (options) {
+			forIn(options, (key, value) => {
 				addAttribute(key, value, indent1);
 			});
 		}
@@ -348,13 +365,6 @@ function Utils() {
 
 			addAttribute('id', node.id, indent2);
 			addAttribute('label', node.label, indent2);
-
-			if (getNodeAttributes) {
-				forIn(getNodeAttributes(node) || {}, (key, value) => {
-
-					addAttribute(key, value, indent2);
-				});
-			}
 
 			lines.push(indent1 + ']');
 		});
@@ -367,18 +377,28 @@ function Utils() {
 			addAttribute('target', edge.target, indent2);
 			addAttribute('label', edge.label, indent2);
 
-			if (getEdgeAttributes) {
-				forIn(getEdgeAttributes(edge) || {}, (key, value) => {
-					addAttribute(key, value, indent2);
-				});
-			}
-
 			lines.push(indent1 + ']');
 		});
 
 		lines.push(']');
 
 		return lines.join('\n');
+	};
+
+	getGML = (network) => {
+		let graph = {};
+		let options = {};
+
+		Object.keys(network).forEach(function (key) {
+			if (key === 'nodes' || key === 'edges') {
+				graph[key] = network[key];
+				return;
+			}
+
+			options[key] = network[key];
+		});
+
+		return stringify(graph, options);
 	};
 
 	isObject = (value) => {
@@ -416,6 +436,7 @@ function Utils() {
 	return {
 		parse: parse,
 		stringify: stringify,
+		getGML: getGML,
 		getDefaultNode: getDefaultNode
 	};
 };
@@ -444,16 +465,7 @@ function HomeController($scope, Utils) {
 	};
 
 	openFile = (index) => {
-		if (isOpened(index)) {
-			return;
-		}
-
-		$scope.openedFiles.push({
-			name: $scope.files[index].name,
-			file_index: index
-		});
-
-		$scope.currentIndex = $scope.openedFiles.length - 1;
+		$scope.currentIndex = index;
 		$scope.currentNetwork = $scope.files[index];
 
 		$('.button-collapse').sideNav('hide');
@@ -482,13 +494,19 @@ function HomeController($scope, Utils) {
 		$('#file').val('');
 	};
 
-	isOpened = (index) => {
-		return $scope.openedFiles.find((file) => {
-			return file.file_index === index;
-		});
-	};
-
 	turnFeature = (feature) => {
+		$scope.options[feature] = !$scope.options[feature];
+
+		if (feature === 'node') {
+			$scope.options['edge'] = false;
+			return;
+		}
+
+		if (feature === 'edge') {
+			$scope.options['node'] = false;
+			return;
+		}
+
 		$scope.options[feature] = !$scope.options[feature];
 	};
 

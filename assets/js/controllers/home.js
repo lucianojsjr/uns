@@ -22,16 +22,7 @@ function HomeController($scope, Utils) {
 	};
 
 	openFile = (index) => {
-		if (isOpened(index)) {
-			return;
-		}
-
-		$scope.openedFiles.push({
-			name: $scope.files[index].name,
-			file_index: index
-		});
-
-		$scope.currentIndex = $scope.openedFiles.length - 1;
+		$scope.currentIndex = index;
 		$scope.currentNetwork = $scope.files[index];
 
 		$('.button-collapse').sideNav('hide');
@@ -60,13 +51,19 @@ function HomeController($scope, Utils) {
 		$('#file').val('');
 	};
 
-	isOpened = (index) => {
-		return $scope.openedFiles.find((file) => {
-			return file.file_index === index;
-		});
-	};
-
 	turnFeature = (feature) => {
+		$scope.options[feature] = !$scope.options[feature];
+
+		if (feature === 'node') {
+			$scope.options['edge'] = false;
+			return;
+		}
+
+		if (feature === 'edge') {
+			$scope.options['node'] = false;
+			return;
+		}
+
 		$scope.options[feature] = !$scope.options[feature];
 	};
 
