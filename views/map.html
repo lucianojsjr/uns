@@ -1,13 +1,10 @@
-<div class="row">
-    <div class="col-lg-12 mb-4 pl-4">
-        <input type="file" on-read-file="loadContent($content)"/>
-
-        <div class="btn-group btn-group-sm pull-right" role="group">
-            <button type="button" class="btn btn-primary" ng-click="changeMapType('roadmap')">Mapa</button>
-            <button type="button" class="btn btn-info" ng-click="changeMapType('satellite')">Satélite</button>
-        </div>
+<div class="col s12 map-view">
+    <div id="map" class="map" ng-show="view !== 'source'"></div>
+    <div class="map-options btn-group">
+        <button ng-class="{'active': view === 'roadmap'}" ng-click="changeView('roadmap')">Mapa</button>
+        <button ng-class="{'active': view === 'satellite'}" ng-click="changeView('satellite')">Satélite</button>
+        <button ng-class="{'active': view === 'source'}" ng-click="changeView('source')" ng-if="currentNetwork">Source
+        </button>
     </div>
-    <div class="col-lg-12">
-       <div id="map" style="width: 100%; height: 400px"></div>
-    </div>
+    <textarea class="col s12 gml" ng-show="view === 'source'" ng-model="gml"></textarea>
 </div>

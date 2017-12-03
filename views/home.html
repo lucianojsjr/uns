@@ -12,11 +12,12 @@
     <div id="nav-mobile" class="side-nav fixed grey lighten-4" style="transform: translateX(-100%);">
         <p class="file-title">Arquivos</p>
         <ul class="collection" ng-show="files.length">
-            <li class="collection-item" ng-repeat="file in files track by $index" ng-click="openFile($index)">
+            <li class="collection-item" ng-class="{'active': $index === currentIndex }"
+                ng-repeat="file in files track by $index" ng-click="openFile($index)">
                 <div>
                     <p>{{ file.name }}</p>
                     <a class="secondary-content">
-                        <i class="material-icons icon-gray">file_download</i>
+                        <i class="material-icons" ng-class="$index === currentIndex ? 'icon-white': 'icon-gray'">file_download</i>
                     </a>
                 </div>
             </li>
@@ -51,8 +52,8 @@
             </ul>
         </div>
     </div>
-    <div class="row" style="position: relative">
-        <div class="col s12 map-view">
+    <div class="row" style="margin-bottom: 0">
+        <div class="col s12">
             <div class="chip" ng-class="{'active': $index === currentIndex }" ng-repeat="openedFile in openedFiles"
                  ng-click="selectFile($index)">
                 {{ openedFile.name }}
@@ -62,3 +63,7 @@
         <map></map>
     </div>
 </main>
+<!--
+<footer class="page-footer">
+    Desenvolvido pelo Autor
+</footer>-->
