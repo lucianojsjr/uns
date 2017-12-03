@@ -22,6 +22,10 @@ main {
     flex: 1 0 auto;
 }
 
+.page-footer {
+    padding: 8px 15px;
+}
+
 i.icon-white {
     color: white;
 }
@@ -88,6 +92,12 @@ i.active:before {
     background-color: #EBEBEB;
 }
 
+.collection-item.active {
+    background-color: #283593 !important;
+    color: white;
+    font-weight: bold;
+}
+
 .collection-item p {
     white-space: nowrap;
     margin-top: 0;
@@ -108,7 +118,7 @@ i.active:before {
     padding: 12px 0;
 }
 
-.map-view .chip {
+.chip {
     cursor: pointer;
     background-color: white;
     border: 1px solid #EBEBEB;
@@ -116,8 +126,60 @@ i.active:before {
     margin: 5px 5px;
 }
 
-.chip.active {
+.map-view {
+    position: relative;
+    padding: 0 !important;
+}
+
+.map {
+    width: 100%;
+    height: 480px;
+}
+
+.map-options {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.btn-group button {
+    background-color: #868e96;
+    border: 1px solid #868e96;
+    color: white;
+    padding: 5px 15px;
+    cursor: pointer;
+    float: left;
+}
+
+.btn-group button:first-child {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.btn-group button:last-child {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.btn-group button:not(:last-child) {
+    border-right: none;
+}
+
+.btn-group:after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+.btn-group button.active {
     background-color: #283593;
     color: white;
-    border: none;
+}
+
+.gml {
+    border: 1px dashed #EBEBEB;
+    resize: none;
+    padding: 10px;
+    height: 440px;
+    margin-top: 6%;
 }

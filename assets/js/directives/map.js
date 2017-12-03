@@ -2,11 +2,13 @@ angular
 	.module('uns')
 	.directive('map', MapDirective);
 
-function MapDirective() {
+MapDirective.$inject = ['Utils'];
+
+function MapDirective(Utils) {
 	return {
 		restrict: 'EA',
 		scope: true,
-		template: '<div id="map" style="width: 100%; height: 500px"></div>',
+		templateUrl: 'views/map.html',
 		controller: ($scope) => {
 			$scope = $scope.$parent;
 
@@ -19,13 +21,18 @@ function MapDirective() {
 				fillOpacity: 1,
 			};
 
+			let map;
 			let markers = [];
 			let edges = [];
 
-			//TODO: CRIAR ABAS MAPA|SATELITE|SOURCE
+			$scope.view = 'roadmap';
+			$scope.gml;
+
 			//TODO: ADICIONAR NOVO NÒ
 			//TODO: ADICIONAR LINK ENTRE ELES
 			//TODO: CRIAR VALORES DEFAULT PARA LINK E NÓS
+			//TODO: ATUALIZAR ARQUIVO
+			//TODO: CRIAR NOVO ARQUIVO
 
 			initMap = () => {
 				map = new google.maps.Map(mapElement, {
@@ -34,6 +41,7 @@ function MapDirective() {
 						lng: -34.8813
 					},
 					zoom: 6,
+					mapTypeId: $scope.view,
 					disableDefaultUI: true
 				});
 
@@ -53,6 +61,17 @@ function MapDirective() {
 			clearMap = () => {
 				setMapOnAll(null);
 				markers = [];
+			};
+
+			changeView = (view) => {
+				$scope.view = view;
+
+				if (view === 'source') {
+					$scope.gml = $scope.currentNetwork ? Utils.getGML($scope.currentNetwork.network) : '';
+					return;
+				}
+
+				map.setMapTypeId(view);
 			};
 
 			addNodeListener = () => {
@@ -174,12 +193,12 @@ function MapDirective() {
 
 			$scope.$watch('currentNetwork', (newValue, oldValue) => {
 				if (newValue) {
-					console.log($scope.currentNetwork)
 					renderNetwork();
 				}
 			});
 
 			initMap();
+			$scope.changeView = changeView;
 		}
 	}
 }
