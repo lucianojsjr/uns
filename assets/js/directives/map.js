@@ -22,7 +22,6 @@ function MapDirective() {
 			let markers = [];
 			let edges = [];
 
-			//TODO: LIMPAR O MAP PARA RENDERIZAR AO RENDERIZAR NOVA REDE
 			//TODO: CRIAR ABAS MAPA|SATELITE|SOURCE
 			//TODO: ADICIONAR NOVO NÒ
 			//TODO: ADICIONAR LINK ENTRE ELES
@@ -126,7 +125,7 @@ function MapDirective() {
 					});
 
 					edges.push(edge);
-					
+
 					source.edges_source.push(edge);
 					target.edges_target.push(edge);
 				});
@@ -175,6 +174,7 @@ function MapDirective() {
 
 			$scope.$watch('currentNetwork', (newValue, oldValue) => {
 				if (newValue) {
+					console.log($scope.currentNetwork)
 					renderNetwork();
 				}
 			});

@@ -3,7 +3,7 @@ angular
 	.factory('Utils', Utils);
 
 function Utils() {
-	function parse(gml) {
+	parse = (gml) => {
 		let json = ('{\n' + gml + '\n}')
 			.replace(/^(\s*)(\w+)\s*\[/gm, '$1"$2": {')
 			.replace(/^(\s*)\]/gm, '$1},')
@@ -16,13 +16,13 @@ function Utils() {
 		let i = 0;
 		let parsed;
 
-		json = json.replace(/^(\s*)"node"/gm, function (all, indent) {
+		json = json.replace(/^(\s*)"node"/gm, (all, indent) => {
 			return (indent + '"node[' + (i++) + ']"');
 		});
 
 		i = 0;
 
-		json = json.replace(/^(\s*)"edge"/gm, function (all, indent) {
+		json = json.replace(/^(\s*)"edge"/gm, (all, indent) => {
 			return (indent + '"edge[' + (i++) + ']"');
 		});
 
@@ -37,7 +37,7 @@ function Utils() {
 			throw new SyntaxError('No Graph Tag');
 		}
 
-		forIn(parsed.graph, function (key, value) {
+		forIn(parsed.graph, (key, value) => {
 
 			let matches = key.match(/^(\w+)\[(\d+)\]$/);
 			let name;
@@ -66,9 +66,9 @@ function Utils() {
 		graph.edges = edges;
 
 		return graph;
-	}
+	};
 
-	function stringify(graph, options) {
+	stringify = (graph, options) => {
 		if (typeof graph.toJSON === 'function') {
 			graph = graph.toJSON();
 		}
@@ -84,13 +84,12 @@ function Utils() {
 		let getEdgeAttributes = options.edgeAttributes || null;
 		let lines = ['graph ['];
 
-		function addAttribute(key, value, indent) {
+		addAttribute = (key, value, indent) => {
 
 			if (isObject(value)) {
 				lines.push(indent + key + ' [');
 
-				forIn(value, function (key, value) {
-
+				forIn(value, (key, value) => {
 					addAttribute(key, value, indent + indent1);
 				});
 
@@ -99,23 +98,21 @@ function Utils() {
 			else {
 				lines.push(indent + attribute(key, value));
 			}
-		}
+		};
 
-		forIn(graph, function (key, value) {
-
+		forIn(graph, (key, value) => {
 			if (key !== 'nodes' && key !== 'edges') {
 				addAttribute(key, value, indent1);
 			}
 		});
 
 		if (getGraphAttributes) {
-			forIn(getGraphAttributes(graph), function (key, value) {
-
+			forIn(getGraphAttributes(graph), (key, value) => {
 				addAttribute(key, value, indent1);
 			});
 		}
 
-		nodes.forEach(function (node) {
+		nodes.forEach((node) => {
 
 			lines.push(indent1 + 'node [');
 
@@ -123,7 +120,7 @@ function Utils() {
 			addAttribute('label', node.label, indent2);
 
 			if (getNodeAttributes) {
-				forIn(getNodeAttributes(node) || {}, function (key, value) {
+				forIn(getNodeAttributes(node) || {}, (key, value) => {
 
 					addAttribute(key, value, indent2);
 				});
@@ -132,7 +129,7 @@ function Utils() {
 			lines.push(indent1 + ']');
 		});
 
-		edges.forEach(function (edge) {
+		edges.forEach((edge) => {
 
 			lines.push(indent1 + 'edge [');
 
@@ -141,8 +138,7 @@ function Utils() {
 			addAttribute('label', edge.label, indent2);
 
 			if (getEdgeAttributes) {
-				forIn(getEdgeAttributes(edge) || {}, function (key, value) {
-
+				forIn(getEdgeAttributes(edge) || {}, (key, value) => {
 					addAttribute(key, value, indent2);
 				});
 			}
@@ -153,19 +149,19 @@ function Utils() {
 		lines.push(']');
 
 		return lines.join('\n');
-	}
+	};
 
-	function isObject(value) {
+	isObject = (value) => {
 		return (value && Object.prototype.toString.call(value) === '[object Object]');
-	}
+	};
 
-	function forIn(object, callback) {
-		Object.keys(object).forEach(function (key) {
+	forIn = (object, callback) => {
+		Object.keys(object).forEach((key) => {
 			callback(key, object[key]);
 		});
-	}
+	};
 
-	function attribute(key, value) {
+	attribute = (key, value) => {
 		if (typeof value === 'boolean') {
 			value = Number(value);
 		} else {
@@ -173,10 +169,23 @@ function Utils() {
 		}
 
 		return (key + ' ' + value);
-	}
+	};
+
+	getDefaultNode = (info) => {
+		return {
+			id: info.id,
+			label: `node${info.id}`,
+			Country: info.country,
+			Internal: 1,
+			Latitude: info.lat,
+			Longitude: info.lng,
+			Population: 0
+		};
+	};
 
 	return {
 		parse: parse,
-		stringify: stringify
-	}
+		stringify: stringify,
+		getDefaultNode: getDefaultNode
+	};
 };
