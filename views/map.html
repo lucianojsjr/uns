@@ -6,5 +6,7 @@
         <button ng-class="{'active': view === 'source'}" ng-click="changeView('source')" ng-if="currentNetwork">Source
         </button>
     </div>
-    <textarea class="col s12 gml" ng-show="view === 'source'" ng-model="gml"></textarea>
+    <div class="col s12">
+        <textarea class="col s12 gml" ng-show="view === 'source'" ng-model="$parent.gml"></textarea>
+    </div>
 </div>

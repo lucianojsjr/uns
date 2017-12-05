@@ -12,18 +12,13 @@ header, main, footer {
     }
 }
 
-body {
-    display: flex;
-    min-height: 100vh;
-    flex-direction: column;
-}
-
+html,
+body,
+ui-view,
 main {
-    flex: 1 0 auto;
-}
-
-.page-footer {
-    padding: 8px 15px;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
 }
 
 i.icon-white {
@@ -128,12 +123,13 @@ i.active:before {
 
 .map-view {
     position: relative;
+    height: 100%;
     padding: 0 !important;
 }
 
 .map {
     width: 100%;
-    height: 480px;
+    height: 100%;
 }
 
 .map-options {
