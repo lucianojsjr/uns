@@ -197,6 +197,13 @@ function MapDirective(Utils) {
 				}
 			});
 
+			$scope.$watch('gml', (newValue, oldValue) => {
+				if (newValue) {
+					console.log(newValue);
+					console.log(Utils.parse(newValue + ""));
+				}
+			});
+
 			initMap();
 			$scope.changeView = changeView;
 		}

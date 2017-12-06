@@ -5,6 +5,8 @@ angular
 HomeController.$inject = ['$scope', 'Utils'];
 
 function HomeController($scope, Utils) {
+	const buttonCollapse = $('.button-collapse');
+
 	$scope.currentIndex;
 	$scope.currentNetwork;
 	$scope.files = [];
@@ -16,7 +18,7 @@ function HomeController($scope, Utils) {
 	};
 
 	init = () => {
-		$('.button-collapse').sideNav({
+		buttonCollapse.sideNav({
 			closeOnClick: true
 		});
 	};
@@ -25,7 +27,7 @@ function HomeController($scope, Utils) {
 		$scope.currentIndex = index;
 		$scope.currentNetwork = $scope.files[index];
 
-		$('.button-collapse').sideNav('hide');
+		buttonCollapse.sideNav('hide');
 	};
 
 	closeFile = (index) => {
@@ -43,12 +45,36 @@ function HomeController($scope, Utils) {
 	};
 
 	loadFile = (content) => {
+		const file = file;
+
 		$scope.files.push({
-			name: $('#file').prop('files')[0].name,
+			name: file.prop('files')[0].name,
 			network: Utils.parse(content)
 		});
 
-		$('#file').val('');
+		file.val('');
+	};
+
+	downloadFile = (index) => {
+		const fileIndex = $scope.currentIndex || index;
+		const file = $scope.files[fileIndex];
+		const gml = Utils.getGML(file.network);
+		const link = document.createElement('a');
+		const blob = new Blob([gml],
+			{type: 'text/plain'});
+
+		link.download = file.name;
+		link.href = window.URL.createObjectURL(blob);
+		link.onclick = (e) => {
+			const that = this;
+
+			setTimeout(() => {
+				window.URL.revokeObjectURL(that.href);
+			}, 1500);
+		};
+
+		link.click();
+		link.remove();
 	};
 
 	turnFeature = (feature) => {
@@ -67,32 +93,11 @@ function HomeController($scope, Utils) {
 		$scope.options[feature] = !$scope.options[feature];
 	};
 
-	$scope.properties = {
-		"Número de nós": 1,
-		"Número de enlaces": 1,
-		"$\overline{d}$": 1,
-		"SD APL": 1,
-		"$\overline{c},km$": 1,
-		"Assortatividade": 1,
-		"Densidade": 1,
-		"Diâmetro  ísico": 1,
-		"Densidade por distância física": 1,
-		"Con. natural": 1,
-		"Raio espectral": 1,
-		"$CC$": 1,
-		"$I(G)$": 1,
-		"$\mathcal{I(F)}$": 1,
-		"PTLE": 1,
-		"diam($G$)": 1,
-		"Con. algébrica	": 1,
-		"$\overline{c}$": 1,
-		"Closeness máximo": 1
-	};
-
 	init();
 	$scope.openFile = openFile;
 	$scope.closeFile = closeFile;
 	$scope.selectFile = selectFile;
 	$scope.loadFile = loadFile;
+	$scope.downloadFile = downloadFile;
 	$scope.turnFeature = turnFeature;
 }

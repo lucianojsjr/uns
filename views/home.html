@@ -16,7 +16,7 @@
                 ng-repeat="file in files track by $index" ng-click="openFile($index)">
                 <div>
                     <p>{{ file.name }}</p>
-                    <a class="secondary-content">
+                    <a class="secondary-content" ng-click="$event.stopPropagation(); downloadFile($index)">
                         <i class="material-icons" ng-class="$index === currentIndex ? 'icon-white': 'icon-gray'">file_download</i>
                     </a>
                 </div>
@@ -37,7 +37,7 @@
                         <i class="icon-upload small"></i>
                     </label>
                 </li>
-                <li><a href=""><i class="icon-save small"></i></a></li>
+                <!--<li><a href=""><i class="icon-save small"></i></a></li>-->
                 <li><a href=""><i class="icon-export small"></i></a></li>
                 <li><a href=""><i class="icon-printer small"></i></a></li>
                 <li><a href="" class="separator"></a></li>
@@ -63,7 +63,3 @@
         <map></map>
     </div>
 </main>
-<!--
-<footer class="page-footer">
-    Desenvolvido pelo Autor
-</footer>-->
