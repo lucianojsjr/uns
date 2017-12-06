@@ -1,4 +1,11 @@
 /* ========================
+            COMMONS
+   ======================== */
+.m-b-10 {
+    margin-bottom: 10px;
+}
+
+/* ========================
             CUSTOM
    ======================== */
 
@@ -52,12 +59,14 @@ i.active:before {
 .menu ul > li {
     display: inline;
     margin-right: 15px;
+    cursor: pointer;
 }
 
 .menu ul > li .separator {
     border-right: 1px solid #717171;
     padding-top: 20px;
     margin: 0 15px;
+    cursor: default;
 }
 
 .btn-upload {
@@ -178,4 +187,84 @@ i.active:before {
     padding: 10px;
     height: 440px;
     margin-top: 6%;
+}
+
+.modal {
+    text-align: center;
+    margin-top: 10%;
+    padding: 0 !important;
+}
+
+.modal-title {
+    font-size: 16px;
+    color: #717171;
+    font-weight: bold;
+}
+
+.btn {
+    display: inline-block;
+    padding: 6px 30px;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    text-transform: none;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #337ab7;
+    border-color: #2e6da4;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #337ab7;
+    border-color: #2e6da4;
+}
+
+
+.btn-primary.focus,
+.btn-primary:focus {
+    color: #fff;
+    background-color: #286090;
+    border-color: #122b40;
+}
+
+.btn-primary:hover {
+    color: #fff;
+    background-color: #286090;
+    border-color: #204d74;
+}
+
+.btn-cancel {
+    color: #fff;
+    background-color: #AAAAAA;
+    border-color: #AAAAAA;
+}
+
+.btn-cancel.focus,
+.btn-cancel:focus {
+    color: #fff;
+    background-color: #9F9F9F;
+    border-color: #9F9F9F;
+}
+
+.btn-cancel:hover {
+    color: #fff;
+    background-color: #9F9F9F;
+    border-color: #9F9F9F
 }

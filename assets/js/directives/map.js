@@ -94,6 +94,10 @@ function MapDirective(Utils) {
 			renderNetwork = () => {
 				clearMap();
 
+				if (!$scope.currentNetwork.network || !$scope.currentNetwork.network.nodes) {
+					return;
+				}
+
 				renderNodes();
 				renderEdges();
 			};

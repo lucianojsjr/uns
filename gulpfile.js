@@ -9,6 +9,7 @@ libJS.push('assets/libs/angular/angular.min.js');
 libJS.push('assets/libs/angular-ui-router/release/angular-ui-router.min.js');
 libJS.push('assets/libs/jquery/dist/jquery.min.js');
 libJS.push('assets/libs/materialize/dist/js/materialize.min.js');
+libJS.push('assets/libs/angular-bootstrap/ui-bootstrap-tpls.min.js');
 
 appJS.push('assets/js/app.js');
 appJS.push('assets/js/directives/*.js');

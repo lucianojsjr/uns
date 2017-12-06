@@ -29,37 +29,49 @@
     <div class="row" style="margin-bottom: 0;">
         <div class="col s12 menu grey lighten-4">
             <ul>
-                <li><a href=""><i class="icon-new-file small"></i></a></li>
-                <li>
+                <li class="option" ng-click="newFile()">
+                    <i class="icon-new-file small"></i>
+                </li>
+                <li class="option">
                     <input type="file" name="file" id="file" class="btn-upload" accept=".gml"
                            on-read-file="loadFile($content)"/>
                     <label for="file">
                         <i class="icon-upload small"></i>
                     </label>
                 </li>
-                <!--<li><a href=""><i class="icon-save small"></i></a></li>-->
-                <li><a href=""><i class="icon-export small"></i></a></li>
-                <li><a href=""><i class="icon-printer small"></i></a></li>
-                <li><a href="" class="separator"></a></li>
-                <li><a href=""><i class="icon-server small" ng-class="{'active' : options.node}"
-                                  ng-click="turnFeature('node')"></i></a></li>
-                <li><a href=""><i class="icon-edge small" ng-class="{'active' : options.edge}"
-                                  ng-click="turnFeature('edge')"></i></a></li>
-                <li><a href=""><i class="icon-run small" ng-class="{'active' : options.running}"
-                                  ng-click="turnFeature('running')"></i></a></li>
-                <li><a href=""><i class="icon-settings small"></i></a></li>
-                <li><a href="" class="separator"></a></li>
+                <!--<li class="option"><i class="icon-save small"></i>
+                </li>-->
+                <li class="option">
+                    <i class="icon-export small"></i>
+                </li>
+                <li class="option">
+                    <i class="icon-printer small"></i>
+                </li>
+                <li>
+                    <a href="" class="separator"></a>
+                </li>
+                <li class="option">
+                    <i class="icon-server small" ng-class="{'active' : options.node}"
+                                  ng-click="turnFeature('node')"></i>
+                </li>
+                <li class="option">
+                    <i class="icon-edge small" ng-class="{'active' : options.edge}"
+                                  ng-click="turnFeature('edge')"></i>
+                </li>
+                <li class="option">
+                    <i class="icon-run small" ng-class="{'active' : options.running}"
+                                  ng-click="turnFeature('running')"></i>
+                </li>
+                <li class="option">
+                    <i class="icon-settings small"></i>
+                </li>
+                <li>
+                    <a href="" class="separator"></a>
+                </li>
             </ul>
         </div>
     </div>
     <div class="row" style="margin-bottom: 0; height: 100%">
-        <div class="col s12">
-            <div class="chip" ng-class="{'active': $index === currentIndex }" ng-repeat="openedFile in openedFiles"
-                 ng-click="selectFile($index)">
-                {{ openedFile.name }}
-                <i class="close material-icons" ng-click="closeFile($index)">close</i>
-            </div>
-        </div>
         <map></map>
     </div>
 </main>

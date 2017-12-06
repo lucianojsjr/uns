@@ -1,4 +1,4 @@
-let unsModule = angular.module('uns', ['ui.router']);
+let unsModule = angular.module('uns', ['ui.router', 'ui.bootstrap']);
 
 config.$inject = ['$stateProvider', '$urlRouterProvider'];
 unsModule.config(config);
@@ -15,4 +15,4 @@ function config($stateProvider, $urlRouterProvider) {
 	});
 
 	$urlRouterProvider.otherwise('/home');
-};
+}

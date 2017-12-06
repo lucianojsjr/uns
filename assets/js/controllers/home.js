@@ -2,9 +2,9 @@ angular
 	.module('uns')
 	.controller('HomeController', HomeController);
 
-HomeController.$inject = ['$scope', 'Utils'];
+HomeController.$inject = ['$scope', '$uibModal', 'Utils'];
 
-function HomeController($scope, Utils) {
+function HomeController($scope, $uibModal, Utils) {
 	const buttonCollapse = $('.button-collapse');
 
 	$scope.currentIndex;
@@ -23,6 +23,22 @@ function HomeController($scope, Utils) {
 		});
 	};
 
+	newFile = () => {
+		const modalInstance = $uibModal.open({
+			templateUrl: 'views/modal-new-file.html',
+			controller: 'NewFileController'
+		});
+
+		modalInstance.result.then((data) => {
+			data = data.replace(/ /g, '_');
+
+			$scope.files.push({
+				name: `${data}.gml`,
+				network: {}
+			});
+		});
+	};
+
 	openFile = (index) => {
 		$scope.currentIndex = index;
 		$scope.currentNetwork = $scope.files[index];
@@ -30,22 +46,8 @@ function HomeController($scope, Utils) {
 		buttonCollapse.sideNav('hide');
 	};
 
-	closeFile = (index) => {
-		$scope.openedFiles.splice(index, 1);
-
-		$scope.currentIndex = $scope.openedFiles.length - 1;
-		$scope.currentNetwork = $scope.files[$scope.currentIndex];
-	};
-
-	selectFile = (index) => {
-		const fileIndex = $scope.openedFiles[index].file_index;
-
-		$scope.currentIndex = index;
-		$scope.currentNetwork = $scope.files[fileIndex];
-	};
-
 	loadFile = (content) => {
-		const file = file;
+		const file = $('#file');
 
 		$scope.files.push({
 			name: file.prop('files')[0].name,
@@ -56,9 +58,9 @@ function HomeController($scope, Utils) {
 	};
 
 	downloadFile = (index) => {
-		const fileIndex = $scope.currentIndex || index;
+		const fileIndex = index || $scope.currentIndex;
 		const file = $scope.files[fileIndex];
-		const gml = Utils.getGML(file.network);
+		const gml = Utils.getGML(file.network) || '';
 		const link = document.createElement('a');
 		const blob = new Blob([gml],
 			{type: 'text/plain'});
@@ -94,9 +96,8 @@ function HomeController($scope, Utils) {
 	};
 
 	init();
+	$scope.newFile = newFile;
 	$scope.openFile = openFile;
-	$scope.closeFile = closeFile;
-	$scope.selectFile = selectFile;
 	$scope.loadFile = loadFile;
 	$scope.downloadFile = downloadFile;
 	$scope.turnFeature = turnFeature;
