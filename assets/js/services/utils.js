@@ -168,6 +168,8 @@ function Utils() {
 			value = JSON.stringify(value);
 		}
 
+		value = value || "null";
+
 		return (key + ' ' + value);
 	};
 
