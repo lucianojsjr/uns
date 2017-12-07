@@ -2,9 +2,9 @@ angular
 	.module('uns')
 	.controller('HomeController', HomeController);
 
-HomeController.$inject = ['$scope', '$uibModal', 'Utils'];
+HomeController.$inject = ['$scope', '$uibModal', 'Utils', 'UNSService'];
 
-function HomeController($scope, $uibModal, Utils) {
+function HomeController($scope, $uibModal, Utils, UNSService) {
 	const buttonCollapse = $('.button-collapse');
 
 	$scope.currentIndex;
@@ -79,6 +79,17 @@ function HomeController($scope, $uibModal, Utils) {
 		link.remove();
 	};
 
+	exportMap = () => {
+		let a = document.createElement('a');
+
+		a.href = UNSService.getMapImageURL();
+		a.download = "map.png";
+
+		document.body.appendChild(a);
+		a.click();
+		document.body.removeChild(a);
+	};
+
 	turnFeature = (feature) => {
 		$scope.options[feature] = !$scope.options[feature];
 
@@ -100,5 +111,6 @@ function HomeController($scope, $uibModal, Utils) {
 	$scope.openFile = openFile;
 	$scope.loadFile = loadFile;
 	$scope.downloadFile = downloadFile;
+	$scope.exportMap = exportMap;
 	$scope.turnFeature = turnFeature;
 }
