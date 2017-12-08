@@ -5,10 +5,60 @@ angular
 UNSService.$inject = ['$http', '$q'];
 
 function UNSService($http, $q) {
-	const KEY = 'AIzaSyDknfIyIe2z1fnRTkaJmCF6Jw3Np536mRs';
+	let options = {
+		key: '&key=AIzaSyDknfIyIe2z1fnRTkaJmCF6Jw3Np536mRs',
+		size: 'size=1200x500',
+		zoom: '&zoom=3',
+		map_type: '&maptype='
+	};
 
-	getMapImageURL = (network) => {
-		return 'https://maps.googleapis.com/maps/api/staticmap?size=512x512&zoom=15&center=Brooklyn&style=feature:road.local%7Celement:geometry%7Ccolor:0x00ff00&style=feature:landscape%7Celement:geometry.fill%7Ccolor:0x000000&style=element:labels%7Cinvert_lightness:true&style=feature:road.arterial%7Celement:labels%7Cinvert_lightness:false&key=' + KEY;
+	getPaths = (node) => {
+		let paths = '';
+
+		if (node.edges_source) {
+			node.edges_source.forEach((edge) => {
+				let start = edge.getPath().getArray()[0];
+				let end = edge.getPath().getArray()[1];
+
+				path = `&path=color:0x000000|weight:2|${start.lat()},${start.lng()}|${end.lat()},${end.lng()}`;
+				paths += path;
+			});
+		}
+
+		if (node.edges_target) {
+			node.edges_target.forEach((edge) => {
+				let start = edge.getPath().getArray()[0];
+				let end = edge.getPath().getArray()[1];
+
+				path = `&path=color:0x000000|weight:2|${start.lat()},${start.lng()}|${end.lat()},${end.lng()}`;
+				paths += path;
+			});
+		}
+
+		return paths;
+	};
+
+	getMapImageURL = (config, network) => {
+		let markers = '';
+		let paths = '';
+
+		if (!network || (!network.nodes && !network.edges)) {
+			return `https://maps.googleapis.com/maps/api/staticmap?${options.size}${options.zoom}${options.map_type}&center=Brooklyn${options.key}`;
+		}
+
+		options.map_type = config.map_type ? (options.map_type + config.map_type)
+			: (options.map_type + 'roadmap');
+
+		network.nodes.forEach((node) => {
+			let marker = `&markers=${node.Latitude},${node.Longitude}`;
+
+			markers += marker;
+			paths += getPaths(node);
+		});
+
+		console.log(`https://maps.googleapis.com/maps/api/staticmap?${options.size}${options.zoom}${options.map_type}${markers}${options.key}`);
+
+		return `https://maps.googleapis.com/maps/api/staticmap?${options.size}${options.zoom}${options.map_type}${markers}${paths}${options.key}`;
 	};
 
 

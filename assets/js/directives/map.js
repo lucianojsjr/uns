@@ -21,10 +21,10 @@ function MapDirective(Utils) {
 				fillOpacity: 1,
 			};
 
-			let map;
 			let markers = [];
 			let edges = [];
 
+			$scope.map;
 			$scope.view = 'roadmap';
 			$scope.gml;
 
@@ -35,7 +35,7 @@ function MapDirective(Utils) {
 			//TODO: CRIAR NOVO ARQUIVO
 
 			initMap = () => {
-				map = new google.maps.Map(mapElement, {
+				$scope.map = new google.maps.Map(mapElement, {
 					center: {
 						lat: -8.05428,
 						lng: -34.8813
@@ -71,11 +71,11 @@ function MapDirective(Utils) {
 					return;
 				}
 
-				map.setMapTypeId(view);
+				$scope.map.setMapTypeId(view);
 			};
 
 			addNodeListener = () => {
-				map.addListener('click', (evt) => {
+				$scope.map.addListener('click', (evt) => {
 					if (!$scope.options.node) {
 						return;
 					}
@@ -84,7 +84,7 @@ function MapDirective(Utils) {
 						position: evt.latLng,
 						icon: markerIcon,
 						draggable: true,
-						map: map
+						map: $scope.map
 					});
 
 					markers.push(marker);
@@ -94,7 +94,7 @@ function MapDirective(Utils) {
 			renderNetwork = () => {
 				clearMap();
 
-				if (!$scope.currentNetwork.network || !$scope.currentNetwork.network.nodes) {
+				if(!$scope.currentNetwork.network || !$scope.currentNetwork.network.nodes){
 					return;
 				}
 
@@ -106,7 +106,7 @@ function MapDirective(Utils) {
 				let marker;
 
 				$scope.currentNetwork.network.nodes.forEach((node, index) => {
-					map.setCenter({
+					$scope.map.setCenter({
 						lat: node.Latitude,
 						lng: node.Longitude
 					});
@@ -118,7 +118,7 @@ function MapDirective(Utils) {
 						},
 						icon: markerIcon,
 						draggable: true,
-						map: map
+						map: $scope.map
 					});
 
 					markers.push(marker);
@@ -144,7 +144,7 @@ function MapDirective(Utils) {
 						strokeColor: "#000000",
 						strokeOpacity: 1.0,
 						strokeWeight: 2,
-						map: map
+						map: $scope.map
 					});
 
 					edges.push(edge);

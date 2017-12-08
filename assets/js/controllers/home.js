@@ -81,8 +81,11 @@ function HomeController($scope, $uibModal, Utils, UNSService) {
 
 	exportMap = () => {
 		let a = document.createElement('a');
+		let network = $scope.currentNetwork ? $scope.currentNetwork.network : null;
 
-		a.href = UNSService.getMapImageURL();
+		a.href = UNSService.getMapImageURL({
+			map_type: $scope.map.getMapTypeId()
+		}, network);
 		a.download = "map.png";
 
 		document.body.appendChild(a);
