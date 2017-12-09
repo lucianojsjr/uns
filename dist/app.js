@@ -1,4 +1,4 @@
-let unsModule = angular.module('uns', ['ui.router']);
+let unsModule = angular.module('uns', ['ui.router', 'ui.bootstrap']);
 
 config.$inject = ['$stateProvider', '$urlRouterProvider'];
 unsModule.config(config);
@@ -15,7 +15,7 @@ function config($stateProvider, $urlRouterProvider) {
 	});
 
 	$urlRouterProvider.otherwise('/home');
-};
+}
 
 angular
 	.module('uns')
@@ -40,10 +40,10 @@ function MapDirective(Utils) {
 				fillOpacity: 1,
 			};
 
-			let map;
 			let markers = [];
 			let edges = [];
 
+			$scope.map;
 			$scope.view = 'roadmap';
 			$scope.gml;
 
@@ -54,7 +54,7 @@ function MapDirective(Utils) {
 			//TODO: CRIAR NOVO ARQUIVO
 
 			initMap = () => {
-				map = new google.maps.Map(mapElement, {
+				$scope.map = new google.maps.Map(mapElement, {
 					center: {
 						lat: -8.05428,
 						lng: -34.8813
@@ -90,11 +90,11 @@ function MapDirective(Utils) {
 					return;
 				}
 
-				map.setMapTypeId(view);
+				$scope.map.setMapTypeId(view);
 			};
 
 			addNodeListener = () => {
-				map.addListener('click', (evt) => {
+				$scope.map.addListener('click', (evt) => {
 					if (!$scope.options.node) {
 						return;
 					}
@@ -103,7 +103,7 @@ function MapDirective(Utils) {
 						position: evt.latLng,
 						icon: markerIcon,
 						draggable: true,
-						map: map
+						map: $scope.map
 					});
 
 					markers.push(marker);
@@ -113,6 +113,10 @@ function MapDirective(Utils) {
 			renderNetwork = () => {
 				clearMap();
 
+				if(!$scope.currentNetwork.network || !$scope.currentNetwork.network.nodes){
+					return;
+				}
+
 				renderNodes();
 				renderEdges();
 			};
@@ -121,7 +125,7 @@ function MapDirective(Utils) {
 				let marker;
 
 				$scope.currentNetwork.network.nodes.forEach((node, index) => {
-					map.setCenter({
+					$scope.map.setCenter({
 						lat: node.Latitude,
 						lng: node.Longitude
 					});
@@ -133,7 +137,7 @@ function MapDirective(Utils) {
 						},
 						icon: markerIcon,
 						draggable: true,
-						map: map
+						map: $scope.map
 					});
 
 					markers.push(marker);
@@ -159,7 +163,7 @@ function MapDirective(Utils) {
 						strokeColor: "#000000",
 						strokeOpacity: 1.0,
 						strokeWeight: 2,
-						map: map
+						map: $scope.map
 					});
 
 					edges.push(edge);
@@ -255,6 +259,74 @@ function readFile($parse) {
 	};
 }
 
+angular
+	.module('uns')
+	.factory('UNSService', UNSService);
+
+UNSService.$inject = ['$http', '$q'];
+
+function UNSService($http, $q) {
+	let options = {
+		key: '&key=AIzaSyDknfIyIe2z1fnRTkaJmCF6Jw3Np536mRs',
+		size: 'size=1200x500',
+		zoom: '&zoom=3',
+		map_type: '&maptype='
+	};
+
+	getPaths = (node) => {
+		let paths = '';
+
+		if (node.edges_source) {
+			node.edges_source.forEach((edge) => {
+				let start = edge.getPath().getArray()[0];
+				let end = edge.getPath().getArray()[1];
+
+				path = `&path=color:0x000000|weight:2|${start.lat()},${start.lng()}|${end.lat()},${end.lng()}`;
+				paths += path;
+			});
+		}
+
+		if (node.edges_target) {
+			node.edges_target.forEach((edge) => {
+				let start = edge.getPath().getArray()[0];
+				let end = edge.getPath().getArray()[1];
+
+				path = `&path=color:0x000000|weight:2|${start.lat()},${start.lng()}|${end.lat()},${end.lng()}`;
+				paths += path;
+			});
+		}
+
+		return paths;
+	};
+
+	getMapImageURL = (config, network) => {
+		let markers = '';
+		let paths = '';
+
+		if (!network || (!network.nodes && !network.edges)) {
+			return `https://maps.googleapis.com/maps/api/staticmap?${options.size}${options.zoom}${options.map_type}&center=Brooklyn${options.key}`;
+		}
+
+		options.map_type = config.map_type ? (options.map_type + config.map_type)
+			: (options.map_type + 'roadmap');
+
+		network.nodes.forEach((node) => {
+			let marker = `&markers=${node.Latitude},${node.Longitude}`;
+
+			markers += marker;
+			paths += getPaths(node);
+		});
+
+		console.log(`https://maps.googleapis.com/maps/api/staticmap?${options.size}${options.zoom}${options.map_type}${markers}${options.key}`);
+
+		return `https://maps.googleapis.com/maps/api/staticmap?${options.size}${options.zoom}${options.map_type}${markers}${paths}${options.key}`;
+	};
+
+
+	return {
+		getMapImageURL: getMapImageURL
+	};
+}
 angular
 	.module('uns')
 	.factory('Utils', Utils);
@@ -454,9 +526,9 @@ angular
 	.module('uns')
 	.controller('HomeController', HomeController);
 
-HomeController.$inject = ['$scope', 'Utils'];
+HomeController.$inject = ['$scope', '$uibModal', 'Utils', 'UNSService'];
 
-function HomeController($scope, Utils) {
+function HomeController($scope, $uibModal, Utils, UNSService) {
 	const buttonCollapse = $('.button-collapse');
 
 	$scope.currentIndex;
@@ -475,6 +547,22 @@ function HomeController($scope, Utils) {
 		});
 	};
 
+	newFile = () => {
+		const modalInstance = $uibModal.open({
+			templateUrl: 'views/modal-new-file.html',
+			controller: 'NewFileController'
+		});
+
+		modalInstance.result.then((data) => {
+			data = data.replace(/ /g, '_');
+
+			$scope.files.push({
+				name: `${data}.gml`,
+				network: {}
+			});
+		});
+	};
+
 	openFile = (index) => {
 		$scope.currentIndex = index;
 		$scope.currentNetwork = $scope.files[index];
@@ -482,22 +570,8 @@ function HomeController($scope, Utils) {
 		buttonCollapse.sideNav('hide');
 	};
 
-	closeFile = (index) => {
-		$scope.openedFiles.splice(index, 1);
-
-		$scope.currentIndex = $scope.openedFiles.length - 1;
-		$scope.currentNetwork = $scope.files[$scope.currentIndex];
-	};
-
-	selectFile = (index) => {
-		const fileIndex = $scope.openedFiles[index].file_index;
-
-		$scope.currentIndex = index;
-		$scope.currentNetwork = $scope.files[fileIndex];
-	};
-
 	loadFile = (content) => {
-		const file = file;
+		const file = $('#file');
 
 		$scope.files.push({
 			name: file.prop('files')[0].name,
@@ -508,9 +582,9 @@ function HomeController($scope, Utils) {
 	};
 
 	downloadFile = (index) => {
-		const fileIndex = $scope.currentIndex || index;
+		const fileIndex = index || $scope.currentIndex;
 		const file = $scope.files[fileIndex];
-		const gml = Utils.getGML(file.network);
+		const gml = Utils.getGML(file.network) || '';
 		const link = document.createElement('a');
 		const blob = new Blob([gml],
 			{type: 'text/plain'});
@@ -527,6 +601,20 @@ function HomeController($scope, Utils) {
 
 		link.click();
 		link.remove();
+	};
+
+	exportMap = () => {
+		let a = document.createElement('a');
+		let network = $scope.currentNetwork ? $scope.currentNetwork.network : null;
+
+		a.href = UNSService.getMapImageURL({
+			map_type: $scope.map.getMapTypeId()
+		}, network);
+		a.download = "map.png";
+
+		document.body.appendChild(a);
+		a.click();
+		document.body.removeChild(a);
 	};
 
 	turnFeature = (feature) => {
@@ -546,11 +634,11 @@ function HomeController($scope, Utils) {
 	};
 
 	init();
+	$scope.newFile = newFile;
 	$scope.openFile = openFile;
-	$scope.closeFile = closeFile;
-	$scope.selectFile = selectFile;
 	$scope.loadFile = loadFile;
 	$scope.downloadFile = downloadFile;
+	$scope.exportMap = exportMap;
 	$scope.turnFeature = turnFeature;
 }
 
@@ -707,3 +795,23 @@ function MapController($scope, Utils) {
 	$scope.changeMapType = changeMapType;
 	$scope.loadContent = loadContent;
 };
+
+angular
+	.module('uns')
+	.controller('NewFileController', NewFileController);
+
+NewFileController.$inject = ['$scope', '$uibModalInstance'];
+
+function NewFileController($scope, $uibModalInstance) {
+
+	add = () => {
+		$uibModalInstance.close($scope.name);
+	};
+
+	cancel = () => {
+		$uibModalInstance.dismiss('cancel');
+	};
+
+	$scope.add = add;
+	$scope.cancel = cancel;
+}
