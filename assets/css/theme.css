@@ -1,8 +1,16 @@
 /* ========================
             COMMONS
    ======================== */
+.m-b-0 {
+    margin-bottom: 0;
+}
+
 .m-b-10 {
     margin-bottom: 10px;
+}
+
+.text-center {
+    text-align: center;
 }
 
 /* ========================
@@ -28,6 +36,10 @@ main {
     overflow: hidden;
 }
 
+.cpointer {
+    cursor: pointer;
+}
+
 i.icon-white {
     color: white;
 }
@@ -36,9 +48,17 @@ i.icon-gray {
     color: #717171;
 }
 
+i.icon-red {
+    color: #BB0000;
+}
+
 i.active,
 i.active:before {
     color: #00695c;
+}
+
+i.icon-24 {
+    font-size: 24px;
 }
 
 .page-title,
@@ -54,6 +74,11 @@ i.active:before {
 
 .menu {
     margin-left: 10px;
+}
+
+.menu > ul {
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 .menu ul > li {
@@ -236,7 +261,6 @@ i.active:before {
     border-color: #2e6da4;
 }
 
-
 .btn-primary.focus,
 .btn-primary:focus {
     color: #fff;
@@ -267,4 +291,10 @@ i.active:before {
     color: #fff;
     background-color: #9F9F9F;
     border-color: #9F9F9F
+}
+
+.setting-url {
+    display: block;
+    color: #AAAAAA;
+    font-size: 12px;
 }

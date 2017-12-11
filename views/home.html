@@ -50,23 +50,17 @@
                 <li>
                     <a href="" class="separator"></a>
                 </li>
-                <li class="option">
-                    <i class="icon-server small" ng-class="{'active' : options.node}"
-                                  ng-click="turnFeature('node')"></i>
+                <li class="option" ng-click="turnFeature('node')">
+                    <i class="icon-server small" ng-class="{'active' : options.node}"></i>
                 </li>
-                <li class="option">
-                    <i class="icon-edge small" ng-class="{'active' : options.edge}"
-                                  ng-click="turnFeature('edge')"></i>
+                <li class="option" ng-click="turnFeature('edge')">
+                    <i class="icon-edge small" ng-class="{'active' : options.edge}"></i>
                 </li>
-                <li class="option">
-                    <i class="icon-run small" ng-class="{'active' : options.running}"
-                                  ng-click="turnFeature('running')"></i>
+                <li class="option" ng-click="turnFeature('running')">
+                    <i class="icon-run small" ng-class="{'active' : options.running}"></i>
                 </li>
-                <li class="option">
+                <li class="option" ng-click="openSettings()">
                     <i class="icon-settings small"></i>
-                </li>
-                <li>
-                    <a href="" class="separator"></a>
                 </li>
             </ul>
         </div>
