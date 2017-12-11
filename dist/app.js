@@ -45,13 +45,13 @@ function MapDirective(Utils) {
 
 			$scope.map;
 			$scope.view = 'roadmap';
-			$scope.gml;
 
 			//TODO: ADICIONAR NOVO NÒ
 			//TODO: ADICIONAR LINK ENTRE ELES
 			//TODO: CRIAR VALORES DEFAULT PARA LINK E NÓS
-			//TODO: ATUALIZAR ARQUIVO
-			//TODO: CRIAR NOVO ARQUIVO
+			//TODO: ESCOLHER CONFIGURAÇÃO DEFAULT AO RODAR
+			//TODO: IMPRIMIR PDF
+			//TODO: BUSCAR CIDADE
 
 			initMap = () => {
 				$scope.map = new google.maps.Map(mapElement, {
@@ -113,7 +113,7 @@ function MapDirective(Utils) {
 			renderNetwork = () => {
 				clearMap();
 
-				if(!$scope.currentNetwork.network || !$scope.currentNetwork.network.nodes){
+				if (!$scope.currentNetwork.network || !$scope.currentNetwork.network.nodes) {
 					return;
 				}
 
@@ -214,7 +214,15 @@ function MapDirective(Utils) {
 				});
 			};
 
-			$scope.$watch('currentNetwork', (newValue, oldValue) => {
+			updateNetwork = (gml) => {
+				try {
+					$scope.currentNetwork.network = Utils.parse(gml);
+				} catch (err) {
+					console.log(err);
+				}
+			};
+
+			$scope.$watch('currentNetwork.network', (newValue, oldValue) => {
 				if (newValue) {
 					renderNetwork();
 				}
@@ -222,10 +230,10 @@ function MapDirective(Utils) {
 
 			$scope.$watch('gml', (newValue, oldValue) => {
 				if (newValue) {
-					console.log(newValue);
-					console.log(Utils.parse(newValue + ""));
+					updateNetwork(newValue);
 				}
 			});
+
 
 			initMap();
 			$scope.changeView = changeView;
@@ -275,6 +283,7 @@ function UNSService($http, $q) {
 
 	getPaths = (node) => {
 		let paths = '';
+		let path;
 
 		if (node.edges_source) {
 			node.edges_source.forEach((edge) => {
@@ -428,7 +437,7 @@ function Utils() {
 
 		forIn(graph, (key, value) => {
 			if (key !== 'nodes' && key !== 'edges') {
-				addAttribute(key, value, indent1);
+				addAttribute(key, valcue, indent1);
 			}
 		});
 
@@ -442,8 +451,13 @@ function Utils() {
 
 			lines.push(indent1 + 'node [');
 
-			addAttribute('id', node.id, indent2);
-			addAttribute('label', node.label, indent2);
+			Object.keys(node).forEach((key) => {
+				if (key === 'edges_source' || key === 'edges_target') {
+					return;
+				}
+
+				addAttribute(key, node[key], indent2);
+			});
 
 			lines.push(indent1 + ']');
 		});
@@ -452,9 +466,9 @@ function Utils() {
 
 			lines.push(indent1 + 'edge [');
 
-			addAttribute('source', edge.source, indent2);
-			addAttribute('target', edge.target, indent2);
-			addAttribute('label', edge.label, indent2);
+			Object.keys(edge).forEach((key) => {
+				addAttribute(key, edge[key], indent2);
+			});
 
 			lines.push(indent1 + ']');
 		});
@@ -520,7 +534,7 @@ function Utils() {
 		getGML: getGML,
 		getDefaultNode: getDefaultNode
 	};
-};
+}
 
 angular
 	.module('uns')
@@ -547,6 +561,14 @@ function HomeController($scope, $uibModal, Utils, UNSService) {
 		});
 	};
 
+	openSettings = () => {
+		const modalInstance = $uibModal.open({
+			templateUrl: 'views/modal-settings.html',
+			controller: 'SettingsController',
+			size: 'lg'
+		});
+	};
+
 	newFile = () => {
 		const modalInstance = $uibModal.open({
 			templateUrl: 'views/modal-new-file.html',
@@ -566,6 +588,7 @@ function HomeController($scope, $uibModal, Utils, UNSService) {
 	openFile = (index) => {
 		$scope.currentIndex = index;
 		$scope.currentNetwork = $scope.files[index];
+		$scope.gml = $scope.currentNetwork ? Utils.getGML($scope.currentNetwork.network) : '';
 
 		buttonCollapse.sideNav('hide');
 	};
@@ -640,6 +663,7 @@ function HomeController($scope, $uibModal, Utils, UNSService) {
 	$scope.downloadFile = downloadFile;
 	$scope.exportMap = exportMap;
 	$scope.turnFeature = turnFeature;
+	$scope.openSettings = openSettings;
 }
 
 angular
@@ -813,5 +837,67 @@ function NewFileController($scope, $uibModalInstance) {
 	};
 
 	$scope.add = add;
+	$scope.cancel = cancel;
+}
+
+angular
+	.module('uns')
+	.controller('SettingsController', SettingsController);
+
+SettingsController.$inject = ['$scope', '$uibModalInstance'];
+
+function SettingsController($scope, $uibModalInstance) {
+
+	let editIndex;
+
+	$scope.settings = localStorage.settings;
+	$scope.settings = $scope.settings ? JSON.parse($scope.settings) : [];
+
+	add = () => {
+		$scope.settings.push({
+			name: $scope.name,
+			url: $scope.url
+		});
+
+		$scope.name = '';
+		$scope.url = '';
+		localStorage.settings = JSON.stringify($scope.settings);
+	};
+
+	save = () => {
+		$scope.settings[editIndex] = {
+			name: $scope.name,
+			url: $scope.url
+		};
+
+		$scope.name = '';
+		$scope.url = '';
+		$scope.isEdit = false;
+		localStorage.settings = JSON.stringify($scope.settings);
+	};
+
+	remove = (index) => {
+		$scope.settings.splice(index, 1);
+		localStorage.settings = JSON.stringify($scope.settings);
+	};
+
+	edit = (index) => {
+		editIndex = index;
+
+		$scope.isEdit = true;
+		$scope.name = $scope.settings[editIndex].name;
+		$scope.url = $scope.settings[editIndex].url;
+		localStorage.settings = JSON.stringify($scope.settings);
+	};
+
+	cancel = () => {
+		localStorage.settings = JSON.stringify($scope.settings);
+		$uibModalInstance.dismiss('cancel');
+	};
+
+	$scope.add = add;
+	$scope.save = save;
+	$scope.remove = remove;
+	$scope.edit = edit;
 	$scope.cancel = cancel;
 }

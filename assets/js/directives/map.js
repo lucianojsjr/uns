@@ -26,13 +26,13 @@ function MapDirective(Utils) {
 
 			$scope.map;
 			$scope.view = 'roadmap';
-			$scope.gml;
 
 			//TODO: ADICIONAR NOVO NÒ
 			//TODO: ADICIONAR LINK ENTRE ELES
 			//TODO: CRIAR VALORES DEFAULT PARA LINK E NÓS
-			//TODO: ATUALIZAR ARQUIVO
-			//TODO: CRIAR NOVO ARQUIVO
+			//TODO: ESCOLHER CONFIGURAÇÃO DEFAULT AO RODAR
+			//TODO: IMPRIMIR PDF
+			//TODO: BUSCAR CIDADE
 
 			initMap = () => {
 				$scope.map = new google.maps.Map(mapElement, {
@@ -94,7 +94,7 @@ function MapDirective(Utils) {
 			renderNetwork = () => {
 				clearMap();
 
-				if(!$scope.currentNetwork.network || !$scope.currentNetwork.network.nodes){
+				if (!$scope.currentNetwork.network || !$scope.currentNetwork.network.nodes) {
 					return;
 				}
 
@@ -195,7 +195,15 @@ function MapDirective(Utils) {
 				});
 			};
 
-			$scope.$watch('currentNetwork', (newValue, oldValue) => {
+			updateNetwork = (gml) => {
+				try {
+					$scope.currentNetwork.network = Utils.parse(gml);
+				} catch (err) {
+					console.log(err);
+				}
+			};
+
+			$scope.$watch('currentNetwork.network', (newValue, oldValue) => {
 				if (newValue) {
 					renderNetwork();
 				}
@@ -203,10 +211,10 @@ function MapDirective(Utils) {
 
 			$scope.$watch('gml', (newValue, oldValue) => {
 				if (newValue) {
-					console.log(newValue);
-					console.log(Utils.parse(newValue + ""));
+					updateNetwork(newValue);
 				}
 			});
+
 
 			initMap();
 			$scope.changeView = changeView;
