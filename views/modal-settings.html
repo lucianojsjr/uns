@@ -1,0 +1,67 @@
+<div class="modal-header">
+</div>
+<div class="modal-body">
+    <div class="row m-b-0">
+        <form class="col s12">
+            <div class="row">
+                <div class="col s12 m-b-10">
+                    <p class="modal-title">Nova Configuração</p>
+                </div>
+                <div class="input-field col s6">
+                    <input id="name" type="text" class="validate" ng-model="name">
+                    <label for="name">Nome da Configuração</label>
+                </div>
+                <div class="input-field col s12">
+                    <input id="url" type="text" class="validate" ng-model="url">
+                    <label for="url">Endpoint</label>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer m-b-10">
+        <button type="button" class="waves-effect waves-light btn btn-primary" ng-click="add()" ng-show="!isEdit">
+            Adicionar
+        </button>
+        <button type="button" class="waves-effect waves-light btn btn-primary" ng-click="save()" ng-show="isEdit">Salvar
+            Alterações
+        </button>
+    </div>
+    <hr style="border-top: 1px solid #d1d1d1">
+    <div class="row">
+        <div class="col s12">
+            <p class="modal-title left">Configurações</p>
+        </div>
+        <div class="col s12">
+            <table class="striped">
+                <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th width="80"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="setting in settings track by $index">
+                    <td>
+                        {{ setting.name }}
+                        <span class="setting-url">{{ setting.url }}</span>
+                    </td>
+                    <td class="center">
+                        <a class="cpointer" ng-click="remove($index)">
+                            <i class="material-icons icon-24 icon-red">delete_forever</i>
+                        </a>
+                        <a class="cpointer" ng-click="edit($index)">
+                            <i class="material-icons icon-24 icon-gray">edit</i>
+                        </a>
+                    </td>
+                </tr>
+                <tr ng-show="!settings.length">
+                    <td colspan="3" class="center">Nenhuma configuração adicionada.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="modal-footer m-b-10">
+    <button type="button" class="waves-effect waves-light btn btn-cancel" ng-click="cancel()">Fechar</button>
+</div>

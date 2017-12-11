@@ -23,6 +23,14 @@ function HomeController($scope, $uibModal, Utils, UNSService) {
 		});
 	};
 
+	openSettings = () => {
+		const modalInstance = $uibModal.open({
+			templateUrl: 'views/modal-settings.html',
+			controller: 'SettingsController',
+			size: 'lg'
+		});
+	};
+
 	newFile = () => {
 		const modalInstance = $uibModal.open({
 			templateUrl: 'views/modal-new-file.html',
@@ -42,6 +50,7 @@ function HomeController($scope, $uibModal, Utils, UNSService) {
 	openFile = (index) => {
 		$scope.currentIndex = index;
 		$scope.currentNetwork = $scope.files[index];
+		$scope.gml = $scope.currentNetwork ? Utils.getGML($scope.currentNetwork.network) : '';
 
 		buttonCollapse.sideNav('hide');
 	};
@@ -116,4 +125,5 @@ function HomeController($scope, $uibModal, Utils, UNSService) {
 	$scope.downloadFile = downloadFile;
 	$scope.exportMap = exportMap;
 	$scope.turnFeature = turnFeature;
+	$scope.openSettings = openSettings;
 }
