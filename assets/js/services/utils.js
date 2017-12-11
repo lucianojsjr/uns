@@ -99,7 +99,7 @@ function Utils() {
 
 		forIn(graph, (key, value) => {
 			if (key !== 'nodes' && key !== 'edges') {
-				addAttribute(key, value, indent1);
+				addAttribute(key, valcue, indent1);
 			}
 		});
 
@@ -113,8 +113,13 @@ function Utils() {
 
 			lines.push(indent1 + 'node [');
 
-			addAttribute('id', node.id, indent2);
-			addAttribute('label', node.label, indent2);
+			Object.keys(node).forEach((key) => {
+				if (key === 'edges_source' || key === 'edges_target') {
+					return;
+				}
+
+				addAttribute(key, node[key], indent2);
+			});
 
 			lines.push(indent1 + ']');
 		});
@@ -123,9 +128,9 @@ function Utils() {
 
 			lines.push(indent1 + 'edge [');
 
-			addAttribute('source', edge.source, indent2);
-			addAttribute('target', edge.target, indent2);
-			addAttribute('label', edge.label, indent2);
+			Object.keys(edge).forEach((key) => {
+				addAttribute(key, edge[key], indent2);
+			});
 
 			lines.push(indent1 + ']');
 		});
@@ -191,4 +196,4 @@ function Utils() {
 		getGML: getGML,
 		getDefaultNode: getDefaultNode
 	};
-};
+}

@@ -14,6 +14,7 @@ function UNSService($http, $q) {
 
 	getPaths = (node) => {
 		let paths = '';
+		let path;
 
 		if (node.edges_source) {
 			node.edges_source.forEach((edge) => {
