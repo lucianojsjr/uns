@@ -1,0 +1,66 @@
+<div class="modal-header">
+</div>
+<div class="modal-body">
+    <div class="row" ng-show="isRunning">
+        <div class="preloader-wrapper big active">
+            <div class="spinner-layer spinner-blue-only">
+                <div class="circle-clipper left">
+                    <div class="circle"></div>
+                </div>
+                <div class="gap-patch">
+                    <div class="circle"></div>
+                </div>
+                <div class="circle-clipper right">
+                    <div class="circle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" ng-show="!result && !isRunning">
+        <div class="col s12">
+            <div class="col s12 m-b-10 p-l-0 left-align" ng-show="settings.length">
+                <p class="modal-title">Escolha a configuração:</p>
+            </div>
+            <ul class="collection" ng-show="settings.length">
+                <li class="collection-item" ng-class="{'active': $index === currentIndex }"
+                    ng-repeat="setting in settings track by $index" ng-click="selectSetting($index)">
+                    <div class="left-align">
+                        <p>{{ setting.name }}</p>
+                        <span class="setting-url">{{ setting.url }}</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row" ng-show="isFinished">
+        <div class="col s12 left-align">
+            <p class="modal-title p-l-5">Resultado:</p>
+        </div>
+        <div class="col s12">
+            <table class="result-table bordered">
+                <thead>
+                <tr>
+                    <th width="30%">Propriedade</th>
+                    <th width="80%">Valor</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="(key, value) in result">
+                    <td class="property">{{ key }}</td>
+                    <td>{{ value }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<hr style="border-top: 1px solid #d1d1d1">
+<div class="modal-footer" ng-show="!isRunning">
+    <button type="button" class="waves-effect waves-light btn btn-primary" ng-click="run()" ng-show="currentIndex !== -1 && !isFinished">
+        Executar
+    </button>
+    <button type="button" class="waves-effect waves-light btn btn-primary" ng-click="run()" ng-show="currentIndex !== -1 && isFinished">
+        Executar Novamente
+    </button>
+    <button type="button" class="waves-effect waves-light btn btn-cancel" ng-click="cancel()">Cancelar</button>
+</div>

@@ -57,13 +57,35 @@ function UNSService($http, $q) {
 			paths += getPaths(node);
 		});
 
-		console.log(`https://maps.googleapis.com/maps/api/staticmap?${options.size}${options.zoom}${options.map_type}${markers}${options.key}`);
-
 		return `https://maps.googleapis.com/maps/api/staticmap?${options.size}${options.zoom}${options.map_type}${markers}${paths}${options.key}`;
 	};
 
+	simulate = (url) => {
+		const deferred = $q.defer();
+
+		$http({
+			method: 'GET',
+			url: url
+		}).then(function (response) {
+			handleResponse(deferred, response);
+		}, function (error) {
+			deferred.reject(error);
+		});
+
+		return deferred.promise;
+	};
+
+	handleResponse = (deferred, response) => {
+		if (response.data) {
+			deferred.resolve(response.data);
+			return;
+		}
+
+		deferred.reject(response.message);
+	};
 
 	return {
-		getMapImageURL: getMapImageURL
+		getMapImageURL: getMapImageURL,
+		simulate: simulate
 	};
 }
