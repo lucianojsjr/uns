@@ -31,6 +31,27 @@ function HomeController($scope, $uibModal, Utils, UNSService) {
 		});
 	};
 
+	openRunModal = () => {
+		let modalInstance;
+
+		if (!$scope.currentNetwork) {
+			Materialize.toast('É preciso selecionar uma rede para executar a simulação.', 5000, 'toast-danger');
+			$scope.options['running'] = false;
+			return;
+		}
+
+		modalInstance = $uibModal.open({
+			templateUrl: 'views/modal-run.html',
+			controller: 'RunController',
+			backdrop: true
+		});
+
+		modalInstance.result.then(function () {
+		}, function () {
+			$scope.options['running'] = false;
+		});
+	};
+
 	newFile = () => {
 		const modalInstance = $uibModal.open({
 			templateUrl: 'views/modal-new-file.html',
@@ -105,6 +126,13 @@ function HomeController($scope, $uibModal, Utils, UNSService) {
 	turnFeature = (feature) => {
 		$scope.options[feature] = !$scope.options[feature];
 
+		if (feature === 'running') {
+			$scope.options['edge'] = false;
+			$scope.options['node'] = false;
+			openRunModal();
+			return;
+		}
+
 		if (feature === 'node') {
 			$scope.options['edge'] = false;
 			return;
@@ -126,4 +154,5 @@ function HomeController($scope, $uibModal, Utils, UNSService) {
 	$scope.exportMap = exportMap;
 	$scope.turnFeature = turnFeature;
 	$scope.openSettings = openSettings;
+	$scope.openRunModal = openRunModal;
 }
