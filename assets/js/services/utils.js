@@ -181,7 +181,7 @@ function Utils() {
 	getDefaultNode = (info) => {
 		return {
 			id: info.id,
-			label: `node${info.id}`,
+			label: `node ${info.id}`,
 			Country: info.country,
 			Internal: 1,
 			Latitude: info.lat,

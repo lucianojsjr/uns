@@ -2,9 +2,9 @@ angular
 	.module('uns')
 	.directive('map', MapDirective);
 
-MapDirective.$inject = ['Utils'];
+MapDirective.$inject = ['Utils', 'UNSService'];
 
-function MapDirective(Utils) {
+function MapDirective(Utils, UNSService) {
 	return {
 		restrict: 'EA',
 		scope: true,
@@ -27,11 +27,9 @@ function MapDirective(Utils) {
 			$scope.map;
 			$scope.view = 'roadmap';
 
-			//TODO: ADICIONAR NOVO NÒ
 			//TODO: ADICIONAR LINK ENTRE ELES
-			//TODO: CRIAR VALORES DEFAULT PARA LINK E NÓS
+			//TODO: CRIAR VALORES DEFAULT PARA LINK
 			//TODO: IMPRIMIR PDF
-			//TODO: BUSCAR CIDADE
 
 			initMap = () => {
 				$scope.map = new google.maps.Map(mapElement, {
@@ -62,6 +60,13 @@ function MapDirective(Utils) {
 				markers = [];
 			};
 
+			getCity = (lat, lng, index) => {
+				UNSService.getCityByCoord(lat, lng).then(function (data) {
+					//$scope.currentNetwork.network.nodes[index].Country;
+					//data[0]; ENDERECO
+				});
+			};
+
 			changeView = (view) => {
 				$scope.view = view;
 
@@ -75,18 +80,30 @@ function MapDirective(Utils) {
 
 			addNodeListener = () => {
 				$scope.map.addListener('click', (evt) => {
+					let node;
+					let marker;
+
 					if (!$scope.options.node) {
 						return;
 					}
 
-					let marker = new google.maps.Marker({
+					marker = new google.maps.Marker({
 						position: evt.latLng,
 						icon: markerIcon,
 						draggable: true,
 						map: $scope.map
 					});
 
+					node = Utils.getDefaultNode({
+						id: $scope.currentNetwork.network.nodes.length,
+						lat: evt.latLng.lat(),
+						lng: evt.latLng.lng()
+					});
+
 					markers.push(marker);
+					$scope.currentNetwork.network.nodes.push(node);
+
+					getCity(node.Latitude, node.Longitude, $scope.currentNetwork.network.nodes.length - 1);
 				});
 			};
 

@@ -60,6 +60,21 @@ function UNSService($http, $q) {
 		return `https://maps.googleapis.com/maps/api/staticmap?${options.size}${options.zoom}${options.map_type}${markers}${paths}${options.key}`;
 	};
 
+	getCityByCoord = (lat, lng) => {
+		const deferred = $q.defer();
+
+		$http({
+			method: 'GET',
+			url: `http://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&sensor=false`
+		}).then(function (response) {
+			deferred.resolve(response.data.results);
+		}, function (error) {
+			deferred.reject(error);
+		});
+
+		return deferred.promise;
+	};
+
 	simulate = (url) => {
 		const deferred = $q.defer();
 
@@ -85,6 +100,7 @@ function UNSService($http, $q) {
 	};
 
 	return {
+		getCityByCoord: getCityByCoord,
 		getMapImageURL: getMapImageURL,
 		simulate: simulate
 	};
