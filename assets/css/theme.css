@@ -248,6 +248,24 @@ i.icon-24 {
     padding: 0 !important;
 }
 
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1040;
+    background-color: #000;
+}
+.modal-backdrop.fade {
+    filter: alpha(opacity=0);
+    opacity: 0;
+}
+.modal-backdrop.in {
+    filter: alpha(opacity=50);
+    opacity: .5;
+}
+
 .modal-title {
     font-size: 16px;
     color: #717171;
@@ -327,7 +345,7 @@ i.icon-24 {
     font-size: 12px;
 }
 
-.result-table{
+.result-table {
     table-layout: fixed;
     word-wrap: break-word;
 }
