@@ -21,9 +21,9 @@ angular
 	.module('uns')
 	.directive('map', MapDirective);
 
-MapDirective.$inject = ['Utils'];
+MapDirective.$inject = ['Utils', 'UNSService'];
 
-function MapDirective(Utils) {
+function MapDirective(Utils, UNSService) {
 	return {
 		restrict: 'EA',
 		scope: true,
@@ -42,16 +42,16 @@ function MapDirective(Utils) {
 
 			let markers = [];
 			let edges = [];
+			let isDrawingEdge = false;
+			let edgeToDraw;
+			let sourceNode = -1;
+			let targetNode = -1;
 
 			$scope.map;
 			$scope.view = 'roadmap';
 
-			//TODO: ADICIONAR NOVO NÒ
-			//TODO: ADICIONAR LINK ENTRE ELES
-			//TODO: CRIAR VALORES DEFAULT PARA LINK E NÓS
-			//TODO: ESCOLHER CONFIGURAÇÃO DEFAULT AO RODAR
 			//TODO: IMPRIMIR PDF
-			//TODO: BUSCAR CIDADE
+			//TODO: AO DESENAHR EDGE SE CLICAR FORA DO MAPA, DELETAR EDGE
 
 			initMap = () => {
 				$scope.map = new google.maps.Map(mapElement, {
@@ -64,7 +64,7 @@ function MapDirective(Utils) {
 					disableDefaultUI: true
 				});
 
-				addNodeListener();
+				addMapListener();
 			};
 
 			setMapOnAll = (map) => {
@@ -82,6 +82,22 @@ function MapDirective(Utils) {
 				markers = [];
 			};
 
+			getCity = (lat, lng, index) => {
+				UNSService.getCityByCoord(lat, lng).then(function (data) {
+					let country;
+
+					if(!data || !data.length){
+						return;
+					}
+
+					country = data[0].address_components.find((component) => {
+						return component.types.indexOf('country') !== -1;
+					});
+
+					$scope.currentNetwork.network.nodes[index].Country = country.long_name;
+				});
+			};
+
 			changeView = (view) => {
 				$scope.view = view;
 
@@ -93,20 +109,144 @@ function MapDirective(Utils) {
 				$scope.map.setMapTypeId(view);
 			};
 
-			addNodeListener = () => {
+			addMapListener = () => {
 				$scope.map.addListener('click', (evt) => {
-					if (!$scope.options.node) {
+					addNode(evt);
+				});
+
+				$scope.map.addListener('mousemove', (evt) => {
+					let sourcePoint;
+
+					if (!isDrawingEdge) {
 						return;
 					}
 
-					let marker = new google.maps.Marker({
-						position: evt.latLng,
-						icon: markerIcon,
-						draggable: true,
-						map: $scope.map
-					});
+					sourcePoint = edgeToDraw.getPath().getArray()[0];
+					edgeToDraw.setPath([sourcePoint, evt.latLng]);
+				});
+			};
 
-					markers.push(marker);
+			addNode = (evt) => {
+				let node;
+				let marker;
+				let index;
+
+				if (!$scope.options.node) {
+					return;
+				}
+
+				marker = new google.maps.Marker({
+					position: evt.latLng,
+					icon: markerIcon,
+					draggable: true,
+					map: $scope.map
+				});
+
+				node = Utils.getDefaultNode({
+					id: $scope.currentNetwork.network.nodes.length,
+					lat: evt.latLng.lat(),
+					lng: evt.latLng.lng()
+				});
+
+				node.edges_source = [];
+				node.edges_target = [];
+
+				markers.push(marker);
+				$scope.currentNetwork.network.nodes.push(node);
+				index = $scope.currentNetwork.network.nodes.length - 1;
+
+				bindDrag(marker, index);
+				bindClick(marker, index);
+				getCity(node.Latitude, node.Longitude, index);
+			};
+
+			addEdge = (sourceIndex, targetIndex, edge) => {
+				let source;
+				let target;
+				let networkEdge;
+
+				source = $scope.currentNetwork.network.nodes[sourceIndex];
+				target = $scope.currentNetwork.network.nodes[targetIndex];
+
+				if (findPath(source.id, target.id) !== -1) {
+					edge.setMap(null);
+					return;
+				}
+
+				networkEdge = Utils.getDefaultEdge({
+					source_id: source.id,
+					target_id: target.id
+				});
+
+				edges.push(edge);
+				$scope.currentNetwork.network.edges.push(networkEdge);
+
+				source.edges_source.push(edge);
+				target.edges_target.push(edge);
+			};
+
+			bindClick = (marker, index) => {
+				google.maps.event.addListener(marker, 'click', (evt) => {
+					let newLatLng;
+					let target;
+					let sourcePosition;
+
+					if (!$scope.options.edge) {
+						return;
+					}
+
+					isDrawingEdge = true;
+
+					if (sourceNode === -1) {
+						sourceNode = index;
+					}
+
+					if (targetNode === -1 && sourceNode !== index) {
+						targetNode = index;
+						target = $scope.currentNetwork.network.nodes[targetNode];
+
+						sourcePosition = edgeToDraw.getPath().getArray()[0];
+						edgeToDraw.setPath([sourcePosition, {
+							lat: target.Latitude,
+							lng: target.Longitude
+						}]);
+
+						addEdge(sourceNode, targetNode, edgeToDraw);
+						resetDrawing();
+						return;
+					}
+
+					if (!edgeToDraw) {
+						newLatLng = {
+							lat: evt.latLng.lat(),
+							lng: evt.latLng.lng()
+						};
+
+						edgeToDraw = new google.maps.Polyline({
+							path: [
+								new google.maps.LatLng(newLatLng.lat, newLatLng.lng),
+								new google.maps.LatLng(newLatLng.lat, newLatLng.lng)
+							],
+							strokeColor: "#000000",
+							strokeOpacity: 1.0,
+							strokeWeight: 2,
+							map: $scope.map
+						});
+					}
+				});
+			};
+
+			bindDrag = (marker, index) => {
+				google.maps.event.addListener(marker, 'drag', (evt) => {
+					const newLatLng = {
+						lat: evt.latLng.lat(),
+						lng: evt.latLng.lng()
+					};
+
+					$scope.currentNetwork.network.nodes[index].Latitude = newLatLng.lat;
+					$scope.currentNetwork.network.nodes[index].Longitude = newLatLng.lng;
+
+					updateEdgesPosition(index, newLatLng);
 				});
 			};
 
@@ -142,6 +282,7 @@ function MapDirective(Utils) {
 
 					markers.push(marker);
 					bindDrag(marker, index);
+					bindClick(marker, index);
 				});
 			};
 
@@ -173,20 +314,6 @@ function MapDirective(Utils) {
 				});
 			};
 
-			bindDrag = (marker, index) => {
-				google.maps.event.addListener(marker, 'drag', (evt) => {
-					const newLatLng = {
-						lat: evt.latLng.lat(),
-						lng: evt.latLng.lng()
-					};
-
-					$scope.currentNetwork.network.nodes[index].Latitude = newLatLng.lat;
-					$scope.currentNetwork.network.nodes[index].Longitude = newLatLng.lng;
-
-					updateEdgesPosition(index, newLatLng);
-				});
-			};
-
 			updateEdgesPosition = (index, position) => {
 				if ($scope.currentNetwork.network.nodes[index].edges_source) {
 					$scope.currentNetwork.network.nodes[index].edges_source.forEach((edge) => {
@@ -214,12 +341,31 @@ function MapDirective(Utils) {
 				});
 			};
 
+			findPath = (source, target) => {
+				let path = -1;
+
+				$scope.currentNetwork.network.edges.forEach((edge, index) => {
+					if (edge.source === source && edge.target === target) {
+						path = index;
+					}
+				});
+
+				return path;
+			};
+
 			updateNetwork = (gml) => {
 				try {
 					$scope.currentNetwork.network = Utils.parse(gml);
 				} catch (err) {
 					console.log(err);
 				}
+			};
+
+			resetDrawing = () => {
+				isDrawingEdge = false;
+				edgeToDraw = null;
+				sourceNode = -1;
+				targetNode = -1;
 			};
 
 			$scope.$watch('currentNetwork.network', (newValue, oldValue) => {
@@ -326,14 +472,52 @@ function UNSService($http, $q) {
 			paths += getPaths(node);
 		});
 
-		console.log(`https://maps.googleapis.com/maps/api/staticmap?${options.size}${options.zoom}${options.map_type}${markers}${options.key}`);
-
 		return `https://maps.googleapis.com/maps/api/staticmap?${options.size}${options.zoom}${options.map_type}${markers}${paths}${options.key}`;
 	};
 
+	getCityByCoord = (lat, lng) => {
+		const deferred = $q.defer();
+
+		$http({
+			method: 'GET',
+			url: `http://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&sensor=false`
+		}).then(function (response) {
+			deferred.resolve(response.data.results);
+		}, function (error) {
+			deferred.reject(error);
+		});
+
+		return deferred.promise;
+	};
+
+	simulate = (url) => {
+		const deferred = $q.defer();
+
+		$http({
+			method: 'GET',
+			url: url
+		}).then(function (response) {
+			handleResponse(deferred, response);
+		}, function (error) {
+			deferred.reject(error);
+		});
+
+		return deferred.promise;
+	};
+
+	handleResponse = (deferred, response) => {
+		if (response.data) {
+			deferred.resolve(response.data);
+			return;
+		}
+
+		deferred.reject(response.message);
+	};
 
 	return {
-		getMapImageURL: getMapImageURL
+		getCityByCoord: getCityByCoord,
+		getMapImageURL: getMapImageURL,
+		simulate: simulate
 	};
 }
 angular
@@ -519,7 +703,7 @@ function Utils() {
 	getDefaultNode = (info) => {
 		return {
 			id: info.id,
-			label: `node${info.id}`,
+			label: `node ${info.id}`,
 			Country: info.country,
 			Internal: 1,
 			Latitude: info.lat,
@@ -528,11 +712,23 @@ function Utils() {
 		};
 	};
 
+	getDefaultEdge = (info) => {
+		return {
+			source: info.source_id,
+			target: info.target_id,
+			LinkSpeed: "1",
+			LinkLabel: "1 GB/s",
+			LinkSpeedUnits: "G",
+			LinkSpeedRaw: 1000000000.0
+		};
+	};
+
 	return {
 		parse: parse,
 		stringify: stringify,
 		getGML: getGML,
-		getDefaultNode: getDefaultNode
+		getDefaultNode: getDefaultNode,
+		getDefaultEdge: getDefaultEdge
 	};
 }
 
@@ -566,6 +762,25 @@ function HomeController($scope, $uibModal, Utils, UNSService) {
 			templateUrl: 'views/modal-settings.html',
 			controller: 'SettingsController',
 			size: 'lg'
+		});
+	};
+
+	openRunModal = () => {
+		let modalInstance;
+
+		if (!$scope.currentNetwork) {
+			Materialize.toast('É preciso selecionar uma rede para executar a simulação.', 4000, 'toast-danger');
+			$scope.options['running'] = false;
+			return;
+		}
+		modalInstance = $uibModal.open({
+			templateUrl: 'views/modal-run.html',
+			controller: 'RunController'
+		});
+
+		modalInstance.result.then(function () {
+		}, function () {
+			$scope.options['running'] = false;
 		});
 	};
 
@@ -641,7 +856,19 @@ function HomeController($scope, $uibModal, Utils, UNSService) {
 	};
 
 	turnFeature = (feature) => {
+		if (!$scope.currentNetwork) {
+			Materialize.toast('É preciso selecionar um arquivo para desenhar uma rede.', 3000, 'toast-danger');
+			return;
+		}
+
 		$scope.options[feature] = !$scope.options[feature];
+
+		if (feature === 'running') {
+			$scope.options['edge'] = false;
+			$scope.options['node'] = false;
+			openRunModal();
+			return;
+		}
 
 		if (feature === 'node') {
 			$scope.options['edge'] = false;
@@ -664,6 +891,7 @@ function HomeController($scope, $uibModal, Utils, UNSService) {
 	$scope.exportMap = exportMap;
 	$scope.turnFeature = turnFeature;
 	$scope.openSettings = openSettings;
+	$scope.openRunModal = openRunModal;
 }
 
 angular
@@ -838,6 +1066,55 @@ function NewFileController($scope, $uibModalInstance) {
 
 	$scope.add = add;
 	$scope.cancel = cancel;
+}
+
+angular
+	.module('uns')
+	.controller('RunController', RunController);
+
+RunController.$inject = ['$scope', '$uibModalInstance', 'UNSService'];
+
+function RunController($scope, $uibModalInstance, UNSService) {
+
+	$scope.result;
+	$scope.currentIndex = -1;
+	$scope.settings = localStorage.settings;
+	$scope.settings = $scope.settings ? JSON.parse($scope.settings) : [];
+
+	run = () => {
+		let setting = $scope.settings[$scope.currentIndex];
+
+		simulate(setting.url);
+	};
+
+	simulate = (url) => {
+		$scope.isRunning = true;
+		$scope.isFinished = false;
+
+		UNSService.simulate(url).then(function (data) {
+			$scope.result = data;
+
+			$scope.isRunning = false;
+			$scope.isFinished = true;
+		}, function (error) {
+			console.log(error);
+
+			$scope.isRunning = false;
+			$scope.isFinished = true;
+		});
+	};
+
+	selectSetting = (index) => {
+		$scope.currentIndex = index;
+	};
+
+	cancel = () => {
+		$uibModalInstance.dismiss('cancel');
+	};
+
+	$scope.run = run;
+	$scope.cancel = cancel;
+	$scope.selectSetting = selectSetting;
 }
 
 angular

@@ -35,15 +35,13 @@ function HomeController($scope, $uibModal, Utils, UNSService) {
 		let modalInstance;
 
 		if (!$scope.currentNetwork) {
-			Materialize.toast('É preciso selecionar uma rede para executar a simulação.', 5000, 'toast-danger');
+			Materialize.toast('É preciso selecionar uma rede para executar a simulação.', 4000, 'toast-danger');
 			$scope.options['running'] = false;
 			return;
 		}
-
 		modalInstance = $uibModal.open({
 			templateUrl: 'views/modal-run.html',
-			controller: 'RunController',
-			backdrop: true
+			controller: 'RunController'
 		});
 
 		modalInstance.result.then(function () {
@@ -124,6 +122,11 @@ function HomeController($scope, $uibModal, Utils, UNSService) {
 	};
 
 	turnFeature = (feature) => {
+		if (!$scope.currentNetwork) {
+			Materialize.toast('É preciso selecionar um arquivo para desenhar uma rede.', 3000, 'toast-danger');
+			return;
+		}
+
 		$scope.options[feature] = !$scope.options[feature];
 
 		if (feature === 'running') {
