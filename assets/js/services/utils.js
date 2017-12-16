@@ -190,10 +190,22 @@ function Utils() {
 		};
 	};
 
+	getDefaultEdge = (info) => {
+		return {
+			source: info.source_id,
+			target: info.target_id,
+			LinkSpeed: "1",
+			LinkLabel: "1 GB/s",
+			LinkSpeedUnits: "G",
+			LinkSpeedRaw: 1000000000.0
+		};
+	};
+
 	return {
 		parse: parse,
 		stringify: stringify,
 		getGML: getGML,
-		getDefaultNode: getDefaultNode
+		getDefaultNode: getDefaultNode,
+		getDefaultEdge: getDefaultEdge
 	};
 }
