@@ -50,9 +50,6 @@ function MapDirective(Utils, UNSService) {
 			$scope.map;
 			$scope.view = 'roadmap';
 
-			//TODO: IMPRIMIR PDF
-			//TODO: AO DESENAHR EDGE SE CLICAR FORA DO MAPA, DELETAR EDGE
-
 			initMap = () => {
 				$scope.map = new google.maps.Map(mapElement, {
 					center: {
@@ -86,7 +83,7 @@ function MapDirective(Utils, UNSService) {
 				UNSService.getCityByCoord(lat, lng).then(function (data) {
 					let country;
 
-					if(!data || !data.length){
+					if (!data || !data.length) {
 						return;
 					}
 
@@ -232,6 +229,8 @@ function MapDirective(Utils, UNSService) {
 							strokeWeight: 2,
 							map: $scope.map
 						});
+
+						bindEdgeClick(edgeToDraw);
 					}
 				});
 			};
@@ -247,6 +246,20 @@ function MapDirective(Utils, UNSService) {
 					$scope.currentNetwork.network.nodes[index].Longitude = newLatLng.lng;
 
 					updateEdgesPosition(index, newLatLng);
+				});
+			};
+
+			bindEdgeClick = (edge) => {
+				google.maps.event.addListener(edge, 'click', (evt) => {
+					if (!isDrawingEdge) {
+						return;
+					}
+
+					if (sourceNode !== -1 && targetNode === -1) {
+						edge.setMap(null);
+						resetDrawing();
+						return;
+					}
 				});
 			};
 
