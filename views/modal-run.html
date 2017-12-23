@@ -35,6 +35,22 @@
             <div class="empty-files">Não há configurações para serem executadas.</div>
         </div>
     </div>
+    <hr style="border-top: 1px solid #d1d1d1" ng-show="currentIndex !== -1 && !result && !isRunning && parameters">
+    <div class="row" ng-show="currentIndex !== -1 && !result && !isRunning && parameters">
+        <div class="col s12" ng-show="settings.length">
+            <div class="col s12 p-l-0 left-align">
+                <p class="modal-title m-b-0">Parâmetros:</p>
+            </div>
+            <form class="col s12">
+                <div class="row">
+                    <div class="input-field col s12" ng-repeat="(key, value) in parameters">
+                        <input id="name" type="text" class="validate" ng-model="name">
+                        <label for="name">{{ key }}</label>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
     <div class="row" ng-show="isFinished">
         <div class="col s12 left-align">
             <p class="modal-title p-l-5">Resultado:</p>
@@ -61,8 +77,5 @@
     <button type="button" class="waves-effect waves-light btn btn-primary" ng-click="run()" ng-show="currentIndex !== -1 && !isFinished">
         Executar
     </button>
-    <button type="button" class="waves-effect waves-light btn btn-primary" ng-click="run()" ng-show="currentIndex !== -1 && isFinished">
-        Executar Novamente
-    </button>
-    <button type="button" class="waves-effect waves-light btn btn-cancel" ng-click="cancel()">Cancelar</button>
+    <button type="button" class="waves-effect waves-light btn btn-cancel" ng-click="cancel()">Fechar</button>
 </div>

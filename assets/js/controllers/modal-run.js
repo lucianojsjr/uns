@@ -10,6 +10,11 @@ function RunController($scope, $uibModalInstance, UNSService) {
 	$scope.currentIndex = -1;
 	$scope.settings = localStorage.settings;
 	$scope.settings = $scope.settings ? JSON.parse($scope.settings) : [];
+	$scope.parameters = {
+		parameter_1: 'int',
+		parameter_2: 'string',
+		parameter_3: 'double'
+	};
 
 	run = () => {
 		let setting = $scope.settings[$scope.currentIndex];
