@@ -14,22 +14,26 @@ function SettingsController($scope, $uibModalInstance) {
 	add = () => {
 		$scope.settings.push({
 			name: $scope.name,
-			url: $scope.url
+			url: $scope.url,
+			parameters_url: $scope.parametersUrl
 		});
 
 		$scope.name = '';
 		$scope.url = '';
+		$scope.parametersUrl = '';
 		localStorage.settings = JSON.stringify($scope.settings);
 	};
 
 	save = () => {
 		$scope.settings[editIndex] = {
 			name: $scope.name,
-			url: $scope.url
+			url: $scope.url,
+			parameters_url: $scope.parametersUrl
 		};
 
 		$scope.name = '';
 		$scope.url = '';
+		$scope.parametersUrl = '';
 		$scope.isEdit = false;
 		localStorage.settings = JSON.stringify($scope.settings);
 	};
@@ -45,6 +49,7 @@ function SettingsController($scope, $uibModalInstance) {
 		$scope.isEdit = true;
 		$scope.name = $scope.settings[editIndex].name;
 		$scope.url = $scope.settings[editIndex].url;
+		$scope.parametersUrl = $scope.settings[editIndex].parameters_url;
 		localStorage.settings = JSON.stringify($scope.settings);
 	};
 
