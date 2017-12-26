@@ -41,7 +41,12 @@ function HomeController($scope, $uibModal, Utils, UNSService) {
 		}
 		modalInstance = $uibModal.open({
 			templateUrl: 'views/modal-run.html',
-			controller: 'RunController'
+			controller: 'RunController',
+			resolve: {
+				network: function() {
+					return $scope.currentNetwork.network;
+				}
+			}
 		});
 
 		modalInstance.result.then(function () {
