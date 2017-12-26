@@ -89,7 +89,9 @@ function UNSService($http, $q, Utils) {
 			method: 'POST',
 			url: url,
 			data: formData,
-			headers: { 'Content-Type': undefined }
+			headers: {
+				'Content-Type': undefined
+			}
 		}).then(function (response) {
 			handleResponse(deferred, response);
 		}, function (error) {
@@ -116,8 +118,10 @@ function UNSService($http, $q, Utils) {
 	};
 
 	handleResponse = (deferred, response) => {
-		if (response.data) {
-			deferred.resolve(response.data);
+		const data = response.data.data || response.data;
+
+		if (data) {
+			deferred.resolve(data);
 			return;
 		}
 

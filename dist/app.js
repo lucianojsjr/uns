@@ -430,9 +430,9 @@ angular
 	.module('uns')
 	.factory('UNSService', UNSService);
 
-UNSService.$inject = ['$http', '$q'];
+UNSService.$inject = ['$http', '$q', 'Utils'];
 
-function UNSService($http, $q) {
+function UNSService($http, $q, Utils) {
 	let options = {
 		key: '&key=AIzaSyDknfIyIe2z1fnRTkaJmCF6Jw3Np536mRs',
 		size: 'size=1200x500',
@@ -503,7 +503,34 @@ function UNSService($http, $q) {
 		return deferred.promise;
 	};
 
-	simulate = (url) => {
+	simulate = (url, network, parameters) => {
+		let formData = new FormData();
+
+		const deferred = $q.defer();
+		const gml = Utils.getGML(network) || '';
+		const file = new Blob([gml], {type: 'text/plain'});
+
+		Object.keys(parameters).forEach((key) => formData.append(key, parameters[key]));
+		formData.append('file', file);
+
+		$http({
+			method: 'POST',
+			url: url,
+			data: formData,
+			headers: {
+				'Content-Type': undefined
+			}
+		}).then(function (response) {
+			handleResponse(deferred, response);
+		}, function (error) {
+			deferred.reject(error);
+		});
+
+		return deferred.promise;
+	};
+
+
+	getParameters = (url) => {
 		const deferred = $q.defer();
 
 		$http({
@@ -519,8 +546,10 @@ function UNSService($http, $q) {
 	};
 
 	handleResponse = (deferred, response) => {
-		if (response.data) {
-			deferred.resolve(response.data);
+		const data = response.data.data || response.data;
+
+		if (data) {
+			deferred.resolve(data);
 			return;
 		}
 
@@ -530,7 +559,8 @@ function UNSService($http, $q) {
 	return {
 		getCityByCoord: getCityByCoord,
 		getMapImageURL: getMapImageURL,
-		simulate: simulate
+		simulate: simulate,
+		getParameters: getParameters
 	};
 }
 angular
@@ -788,7 +818,12 @@ function HomeController($scope, $uibModal, Utils, UNSService) {
 		}
 		modalInstance = $uibModal.open({
 			templateUrl: 'views/modal-run.html',
-			controller: 'RunController'
+			controller: 'RunController',
+			resolve: {
+				network: function() {
+					return $scope.currentNetwork.network;
+				}
+			}
 		});
 
 		modalInstance.result.then(function () {
@@ -1085,14 +1120,16 @@ angular
 	.module('uns')
 	.controller('RunController', RunController);
 
-RunController.$inject = ['$scope', '$uibModalInstance', 'UNSService'];
+RunController.$inject = ['$scope', '$uibModalInstance', 'UNSService', 'network'];
 
-function RunController($scope, $uibModalInstance, UNSService) {
+function RunController($scope, $uibModalInstance, UNSService, network) {
 
 	$scope.result;
 	$scope.currentIndex = -1;
 	$scope.settings = localStorage.settings;
 	$scope.settings = $scope.settings ? JSON.parse($scope.settings) : [];
+
+	let parametersValues = {};
 
 	run = () => {
 		let setting = $scope.settings[$scope.currentIndex];
@@ -1100,25 +1137,52 @@ function RunController($scope, $uibModalInstance, UNSService) {
 		simulate(setting.url);
 	};
 
+	getParameters = (url) => {
+		if (!url) {
+			return;
+		}
+
+		$scope.loadingParameters = true;
+
+		UNSService.getParameters(url).then(function (data) {
+			if (!data || !Object.keys(data).length) {
+				return;
+			}
+
+			$scope.parameters = data;
+			$scope.loadingParameters = false;
+		}, function (error) {
+			$scope.parameters = null;
+			$scope.loadingParameters = false;
+		});
+	};
+
 	simulate = (url) => {
 		$scope.isRunning = true;
 		$scope.isFinished = false;
 
-		UNSService.simulate(url).then(function (data) {
+		UNSService.simulate(url, network, parametersValues).then(function (data) {
 			$scope.result = data;
 
 			$scope.isRunning = false;
 			$scope.isFinished = true;
 		}, function (error) {
-			console.log(error);
-
 			$scope.isRunning = false;
 			$scope.isFinished = true;
 		});
 	};
 
 	selectSetting = (index) => {
+		let setting;
+
 		$scope.currentIndex = index;
+		setting = $scope.settings[$scope.currentIndex];
+
+		getParameters(setting.parameters_url);
+	};
+
+	updateValue = (key, value) => {
+		parametersValues[key] = value;
 	};
 
 	cancel = () => {
@@ -1128,6 +1192,7 @@ function RunController($scope, $uibModalInstance, UNSService) {
 	$scope.run = run;
 	$scope.cancel = cancel;
 	$scope.selectSetting = selectSetting;
+	$scope.updateValue = updateValue;
 }
 
 angular
@@ -1146,22 +1211,26 @@ function SettingsController($scope, $uibModalInstance) {
 	add = () => {
 		$scope.settings.push({
 			name: $scope.name,
-			url: $scope.url
+			url: $scope.url,
+			parameters_url: $scope.parametersUrl
 		});
 
 		$scope.name = '';
 		$scope.url = '';
+		$scope.parametersUrl = '';
 		localStorage.settings = JSON.stringify($scope.settings);
 	};
 
 	save = () => {
 		$scope.settings[editIndex] = {
 			name: $scope.name,
-			url: $scope.url
+			url: $scope.url,
+			parameters_url: $scope.parametersUrl
 		};
 
 		$scope.name = '';
 		$scope.url = '';
+		$scope.parametersUrl = '';
 		$scope.isEdit = false;
 		localStorage.settings = JSON.stringify($scope.settings);
 	};
@@ -1177,6 +1246,7 @@ function SettingsController($scope, $uibModalInstance) {
 		$scope.isEdit = true;
 		$scope.name = $scope.settings[editIndex].name;
 		$scope.url = $scope.settings[editIndex].url;
+		$scope.parametersUrl = $scope.settings[editIndex].parameters_url;
 		localStorage.settings = JSON.stringify($scope.settings);
 	};
 
