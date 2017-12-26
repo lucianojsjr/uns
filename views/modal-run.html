@@ -44,14 +44,14 @@
             <form class="col s12">
                 <div class="row">
                     <div class="input-field col s12" ng-repeat="(key, value) in parameters">
-                        <input id="name" type="text" class="validate" ng-model="name">
-                        <label for="name">{{ key }}</label>
+                        <input id="content" type="text" class="validate" ng-model="content" ng-change="updateValue(key, content)">
+                        <label for="content">{{ key }}</label>
                     </div>
                 </div>
             </form>
         </div>
     </div>
-    <div class="row" ng-show="isFinished">
+    <div class="row" ng-show="isFinished && result">
         <div class="col s12 left-align">
             <p class="modal-title p-l-5">Resultado:</p>
         </div>
@@ -74,7 +74,7 @@
     </div>
 </div>
 <div class="modal-footer" ng-show="!isRunning">
-    <button type="button" class="waves-effect waves-light btn btn-primary" ng-click="run()" ng-show="currentIndex !== -1 && !isFinished">
+    <button type="button" class="waves-effect waves-light btn btn-primary" ng-click="run()" ng-show="currentIndex !== -1 && !isFinished && !loadingParameters">
         Executar
     </button>
     <button type="button" class="waves-effect waves-light btn btn-cancel" ng-click="cancel()">Fechar</button>

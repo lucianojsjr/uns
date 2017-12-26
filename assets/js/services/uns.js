@@ -2,9 +2,9 @@ angular
 	.module('uns')
 	.factory('UNSService', UNSService);
 
-UNSService.$inject = ['$http', '$q'];
+UNSService.$inject = ['$http', '$q', 'Utils'];
 
-function UNSService($http, $q) {
+function UNSService($http, $q, Utils) {
 	let options = {
 		key: '&key=AIzaSyDknfIyIe2z1fnRTkaJmCF6Jw3Np536mRs',
 		size: 'size=1200x500',
@@ -75,7 +75,32 @@ function UNSService($http, $q) {
 		return deferred.promise;
 	};
 
-	simulate = (url) => {
+	simulate = (url, network, parameters) => {
+		let formData = new FormData();
+
+		const deferred = $q.defer();
+		const gml = Utils.getGML(network) || '';
+		const file = new Blob([gml], {type: 'text/plain'});
+
+		Object.keys(parameters).forEach((key) => formData.append(key, parameters[key]));
+		formData.append('file', file);
+
+		$http({
+			method: 'POST',
+			url: url,
+			data: formData,
+			headers: { 'Content-Type': undefined }
+		}).then(function (response) {
+			handleResponse(deferred, response);
+		}, function (error) {
+			deferred.reject(error);
+		});
+
+		return deferred.promise;
+	};
+
+
+	getParameters = (url) => {
 		const deferred = $q.defer();
 
 		$http({
@@ -102,6 +127,7 @@ function UNSService($http, $q) {
 	return {
 		getCityByCoord: getCityByCoord,
 		getMapImageURL: getMapImageURL,
-		simulate: simulate
+		simulate: simulate,
+		getParameters: getParameters
 	};
 }

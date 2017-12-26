@@ -43,14 +43,12 @@ function RunController($scope, $uibModalInstance, UNSService, network) {
 		$scope.isRunning = true;
 		$scope.isFinished = false;
 
-		UNSService.simulate(url).then(function (data) {
+		UNSService.simulate(url, network, parametersValues).then(function (data) {
 			$scope.result = data;
 
 			$scope.isRunning = false;
 			$scope.isFinished = true;
 		}, function (error) {
-			console.log(error);
-
 			$scope.isRunning = false;
 			$scope.isFinished = true;
 		});
