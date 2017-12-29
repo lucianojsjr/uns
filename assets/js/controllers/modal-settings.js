@@ -12,6 +12,10 @@ function SettingsController($scope, $uibModalInstance) {
 	$scope.settings = $scope.settings ? JSON.parse($scope.settings) : [];
 
 	add = () => {
+		if(!isValid()){
+			return;
+		}
+
 		$scope.settings.push({
 			name: $scope.name,
 			url: $scope.url,
@@ -25,6 +29,10 @@ function SettingsController($scope, $uibModalInstance) {
 	};
 
 	save = () => {
+		if(!isValid()){
+			return;
+		}
+
 		$scope.settings[editIndex] = {
 			name: $scope.name,
 			url: $scope.url,
@@ -51,6 +59,20 @@ function SettingsController($scope, $uibModalInstance) {
 		$scope.url = $scope.settings[editIndex].url;
 		$scope.parametersUrl = $scope.settings[editIndex].parameters_url;
 		localStorage.settings = JSON.stringify($scope.settings);
+	};
+
+	isValid = () => {
+		if (!$scope.name) {
+			Materialize.toast('É preciso informar o nome da configuração.', 4000, 'toast-danger');
+			return false;
+		}
+
+		if (!$scope.url) {
+			Materialize.toast('É preciso informar a url de simulação.', 4000, 'toast-danger');
+			return false;
+		}
+
+		return true;
 	};
 
 	cancel = () => {
