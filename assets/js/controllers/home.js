@@ -43,7 +43,7 @@ function HomeController($scope, $uibModal, Utils, UNSService) {
 			templateUrl: 'views/modal-run.html',
 			controller: 'RunController',
 			resolve: {
-				network: function() {
+				network: function () {
 					return $scope.currentNetwork.network;
 				}
 			}
@@ -126,6 +126,15 @@ function HomeController($scope, $uibModal, Utils, UNSService) {
 		document.body.removeChild(a);
 	};
 
+	printPDF = () => {
+		let network = $scope.currentNetwork ? $scope.currentNetwork.network : null;
+		let imageUrl = UNSService.getMapImageURL({
+			map_type: $scope.map.getMapTypeId()
+		}, network);
+
+		printJS(imageUrl, 'image');
+	};
+
 	turnFeature = (feature) => {
 		if (!$scope.currentNetwork) {
 			Materialize.toast('É preciso selecionar um arquivo para desenhar uma rede.', 3000, 'toast-danger');
@@ -160,6 +169,7 @@ function HomeController($scope, $uibModal, Utils, UNSService) {
 	$scope.loadFile = loadFile;
 	$scope.downloadFile = downloadFile;
 	$scope.exportMap = exportMap;
+	$scope.printPDF = printPDF;
 	$scope.turnFeature = turnFeature;
 	$scope.openSettings = openSettings;
 	$scope.openRunModal = openRunModal;
