@@ -67,10 +67,8 @@ O Padrão de resposta da simulação deve seguir o padrão abaixo, contendo o no
 
 ### Todos
 
- - Adicionar validações de preenchimento das configurações e parâmetros.
  - Opção de remover nós da rede.
  - Melhorar o padrão proposto.
- - Imprimir PDF da topologia.
  - Criar descrição de como rodar e contribuir com o projeto.
 
 License
