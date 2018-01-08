@@ -83,6 +83,8 @@ function MapDirective(Utils, UNSService) {
 					$scope.currentNetwork.network.nodes[index].edges_source.forEach((edge) => edge.setMap(null));
 					$scope.currentNetwork.network.nodes[index].edges_target.forEach((edge) => edge.setMap(null));
 					$scope.currentNetwork.network.nodes.splice(index, 1);
+
+					renderNetwork();
 				});
 			};
 
@@ -380,6 +382,10 @@ function MapDirective(Utils, UNSService) {
 			updateNetwork = (gml) => {
 				try {
 					$scope.currentNetwork.network = Utils.parse(gml);
+					$scope.currentNetwork.network.nodes.forEach(function (node) {
+						node.edges_source = node.edges_source ? node.edges_source : [];
+						node.edges_target = node.edges_target ? node.edges_target : [];
+					});
 				} catch (err) {
 					console.log(err);
 				}

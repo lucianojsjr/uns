@@ -67,7 +67,6 @@ O Padrão de resposta da simulação deve seguir o padrão abaixo, contendo o no
 
 ### Todos
 
- - Opção de remover nós da rede.
  - Melhorar o padrão proposto.
  - Criar descrição de como rodar e contribuir com o projeto.
 
