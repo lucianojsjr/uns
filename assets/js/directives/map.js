@@ -20,10 +20,12 @@ function MapDirective(Utils, UNSService) {
 				fillColor: 'orange',
 				fillOpacity: 1,
 			};
+			const windowContent = '<button id="remove-button">Remover</button>';
 
 			let markers = [];
 			let edges = [];
 			let isDrawingEdge = false;
+			let infoWindow;
 			let edgeToDraw;
 			let sourceNode = -1;
 			let targetNode = -1;
@@ -42,7 +44,15 @@ function MapDirective(Utils, UNSService) {
 					disableDefaultUI: true
 				});
 
+				infoWindow = new google.maps.InfoWindow({
+					content: windowContent
+				});
+
 				addMapListener();
+			};
+
+			$scope.remove = function () {
+				console.log('remover');
 			};
 
 			setMapOnAll = (map) => {
@@ -58,6 +68,22 @@ function MapDirective(Utils, UNSService) {
 			clearMap = () => {
 				setMapOnAll(null);
 				markers = [];
+			};
+
+			showRemoveWindow = (marker, index) => {
+				const id = $scope.currentNetwork.network.nodes[index].id;
+
+				infoWindow.open($scope.map, marker);
+				$('#remove-button').off('click');
+				$('#remove-button').on('click', () => {
+					marker.setMap(null);
+					$scope.currentNetwork.network.edges = $scope.currentNetwork.network.edges.filter((edge) => {
+						return edge.source !== id && edge.target !== id;
+					});
+					$scope.currentNetwork.network.nodes[index].edges_source.forEach((edge) => edge.setMap(null));
+					$scope.currentNetwork.network.nodes[index].edges_target.forEach((edge) => edge.setMap(null));
+					$scope.currentNetwork.network.nodes.splice(index, 1);
+				});
 			};
 
 			getCity = (lat, lng, index) => {
@@ -168,6 +194,10 @@ function MapDirective(Utils, UNSService) {
 					let newLatLng;
 					let target;
 					let sourcePosition;
+
+					if (!$scope.options.node && !$scope.options.edge) {
+						return showRemoveWindow(marker, index);
+					}
 
 					if (!$scope.options.edge) {
 						return;
